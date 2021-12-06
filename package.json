@@ -1,23 +1,23 @@
 {
-  "name": "daemon-threads",
+  "name": "gado",
   "version": "0.1.0",
   "description": "",
   "keywords": [],
   "bin": {
-    "run-as-daemon": "lib/cli.js"
+    "gado": "lib/cli.js"
   },
   "files": [
     "lib"
   ],
-  "repository": "git@github.com:BlackGlory/daemon-threads.git",
+  "repository": "git@github.com:BlackGlory/gado.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",
   "scripts": {
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --quiet src",
-    "test": "jest --config jest.config.js",
-    "test:coverage": "jest --coverage --config jest.config.js",
-    "dev": "ts-node src/cli.ts",
-    "dev:debug": "node --inspect-brk node_modules/.bin/ts-node src/cli.ts",
+    "test": "jest --runInBand --no-cache --config jest.config.js",
+    "test:coverage": "jest --coverage --runInBand --config jest.config.js",
+    "dev": "ts-node -r tsconfig-paths/register src/cli.ts",
+    "dev:debug": "node --inspect-brk node_modules/.bin/ts-node -r tsconfig-paths/register src/cli.ts",
     "prepublishOnly": "run-s clean build",
     "clean": "rimraf lib",
     "build": "run-s build:*",
@@ -32,29 +32,46 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "^13.2.1",
-    "@commitlint/config-conventional": "^13.2.0",
-    "@types/jest": "^27.0.2",
-    "@types/node": "^16.11.1",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "eslint": "^8.0.1",
+    "@commitlint/cli": "^15.0.0",
+    "@commitlint/config-conventional": "^15.0.0",
+    "@types/debug": "^4.1.7",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.11",
+    "@types/ws": "^8.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "debug": "^4.3.3",
+    "eslint": "^8.4.0",
     "husky": "^4.3.8",
-    "jest": "^27.3.0",
+    "jest": "^27.4.3",
     "npm-run-all": "^4.1.5",
+    "return-style": "^0.12.5",
     "rimraf": "^3.0.2",
     "standard-version": "^9.3.2",
-    "ts-jest": "^27.0.7",
-    "ts-node": "^10.3.0",
+    "ts-jest": "^27.1.0",
+    "ts-node": "^10.4.0",
     "tscpaths": "^0.0.9",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.2"
   },
   "dependencies": {
     "@blackglory/errors": "^1.1.2",
-    "@blackglory/go": "^0.1.0",
-    "commander": "^8.2.0",
-    "extra-retry": "^0.2.9",
-    "fastify": "^3.22.0",
-    "hardware-concurrency": "^0.1.0"
+    "@blackglory/go": "^0.1.1",
+    "@blackglory/pass": "^0.1.0",
+    "@blackglory/types": "^0.5.2",
+    "@blackglory/wait-for": "^0.3.5",
+    "@delight-rpc/child-process": "^0.1.1",
+    "@delight-rpc/websocket": "^0.1.1",
+    "@delight-rpc/worker-threads": "^1.1.1",
+    "abort-controller": "^3.0.0",
+    "commander": "^8.3.0",
+    "delight-rpc": "^1.1.1",
+    "extra-promise": "^0.19.4",
+    "extra-timers": "^0.2.3",
+    "hardware-concurrency": "^0.1.1",
+    "iterable-operator": "^0.14.4",
+    "nanoid": "^3.1.30",
+    "rxjs": "^7.4.0",
+    "tsconfig-paths": "^3.12.0",
+    "ws": "^8.3.0"
   }
 }

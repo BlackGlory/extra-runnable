@@ -1,3 +1,0 @@
-[submodule "eventsource"]
-	path = eventsource
-	url = git@github.com:EventSource/eventsource.git

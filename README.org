@@ -1,0 +1,157 @@
+* Gado
+Gado是一个将Node.js模块作为守护进程使用的启动器.
+模块必须是一个可通过require函数导入的模块对象, 在业界完成向ESM的转变之前, 暂不支持ESM.
+
+** 特性
+- 三种不同的运行模式.
+- 基于指数退避的重试.
+- Gado带有一个WebSocket服务器, 可以通过指令来控制守护进程.
+- 支持通过创建WebSocket连接将守护进程注册到中心化设施, 中心化设施可利用此连接控制守护进程.
+
+注: 之所以使用WebSocket而不是基于HTTP的技术, 是因为WebSocket建立的是双向连接.
+    当中心化设施需要控制守护进程时, 守护进程不需要将自己的WebSocket接口暴露在公网上,
+    同时可以避免增加额外的身份验证步骤.
+
+** Install
+#+BEGIN_EXAMPLE sh
+npm install -g gado
+# or
+yarn global add gado
+#+END_EXAMPLE
+
+** 并发模式
+Gado有三种并发模式, 并发模式在启动时就已确定, 不能更改:
+- async: 适用于I/O密集型的守护进程, 如果脚本包含CPU密集型代码, 则会导致阻塞.
+- thread: 适用于CPU密集型的守护进程, 采用线程模型, 实际使用worker_threads模块.
+- process: 适用于CPU密集型的守护进程, 采用进程模型, 实际使用child_process模块.
+  该模式主要是为了弥补thread模式下Worker无法使用部分Native模块的不足.
+  由于thread模式的资源开销更小, 请优先使用thread模式.
+
+** 模块
+*** 元模块
+元模块用于决定守护进程的一些高级行为, 元模块是可省略的.
+
+#+BEGIN_EXAMPLE typescript
+interface IMetaModule<T> {
+  /*
+   * init返回一个Observable, 该Observable会被订阅, 发出的值会用作任务的params.
+   *
+   * 直到返回的Observable向下游发出第一个值时, 任务才会启动.
+   * Observable可以多次向下游发出值, 新值会替代旧值, 被用于新启动的任务.
+   * Observable到达complete状态意味着除非守护进程重启, 否则之后启动的新任务的params都不会再改变.
+   * Observable到达error状态会导致守护进程以非0状态码终止运行.
+   */
+  init?: () => Observable<T>
+  
+  /*
+   * 这是一个钩子, 当守护进程退出时, 会调用它执行清理工作.
+   * 只要守护进程启动, 无论任何情况下的退出, 都会导致final被调用.
+   */
+  final?: (reason: 'restart') => void | PromiseLike<void>
+  final?: (reason: 'exit') => void | PromiseLike<void>
+  final?: (reason: 'error', error: Error) => void | PromiseLike<void>
+}
+#+END_EXAMPLE
+
+*** 任务模块
+任务模块是守护进程的基本单元, 它在Gado的管理下并发运行, 任务模块不可省略.
+
+#+BEGIN_EXAMPLE typescript
+interface ITaskModule<T> {
+  /*
+   * default函数结束的定义:
+   * - default函数返回非PromiseLike值
+   * - default函数返回PromiseLike值, 且PromiseLike到达resolved或rejected状态.
+   * - default函数抛出错误.
+   *
+   * 当default函数结束与Gado的要求无关时(即在signal不处于aborted时结束),
+   * Gado会根据情况采取不同的重启方式:
+   * 如果default结束是因为函数返回, 则Gado会立即重启任务.
+   * 如果default结束是因为抛出错误, 则Gado会根据指数退避策略重启任务.
+   *
+   * @param {AbortSignal} signal 当Gado要求重启或结束任务时, 该参数会发出中止信号, 任务此时需要自行让default函数结束.
+   */
+  default(signal: AbortSignal, params: T): void | PromiseLike<void>
+}
+#+END_EXAMPLE
+
+** 自注册
+Gado支持通过Webhook完成守护进程的自注册, 这允许通过中心化设施管理多个Gado守护进程.
+
+** API
+Gado的WebSocket接口是建立在[[https://github.com/delight-rpc/delight-rpc][delight-rpc]] 1.0协议上的RPC接口.
+
+*** ping
+#+BEGIN_EXAMPLE typescript
+function ping(): 'pong'
+#+END_EXAMPLE
+
+显式连通性检查, 固定返回 =pong=.
+
+尽管该接口可用作心跳包, 但更建议使用WebSocket协议自带的ping/pong帧机制.
+
+*** getInfo
+#+BEGIN_EXAMPLE typescript
+function getInfo(): {
+  id: string // 守护进程的唯一标识符, 如果在启动时未手动指定, 则会生成一个随机id
+  label: string // 守护进程的标签
+  mode: 'async' | 'thread' | 'process' // 并发模式
+}
+#+END_EXAMPLE
+
+获取守护进程的基本信息.
+
+*** getStatus
+获取守护进程的当前状态.
+
+#+BEGIN_EXAMPLE typescript
+function getStatus(): 'idle' | 'running' | 'scaling' | 'exiting'
+#+END_EXAMPLE
+
+- =idle=: 守护进程的当前和目标并发数都为0, 正处于空闲状态.
+- =running=: 守护进程照常运行.
+- =scaling=: 守护进程的当前和目标并发数不符, 正在调整并发数.
+- =exiting=: 守护进程正在受理退出指令.
+
+*** getConcurrency
+#+BEGIN_EXAMPLE typescript
+function getConcurrency(): {
+  current: number
+  target: number
+}
+#+END_EXAMPLE
+
+返回守护进程的并发数和目标并发数, 返回以下JSON:
+
+*** setConcurrency
+#+BEGIN_EXAMPLE typescript
+function setConcurrency(val: number | string): void
+#+END_EXAMPLE
+设置守护进程的目标并发数, 这会导致守护进程启动或关闭任务.
+将并发数设为0会关闭所有任务, 但不会导致守护进程退出.
+该操作会立即返回, 不会等到达到目标并发数时才返回.
+
+当val是一个字符串时, 支持以下格式:
+- =n=, 整数的字符串表示.
+- =max=, 最大逻辑核心数, 相当于 =100%= 和 =1/1=.
+- =half=, 一半逻辑核心数, 相当于 =50%= 和 =1/2=.
+- =-n=, 最大逻辑核心数减去n.
+- =n/m=, 按分数分配逻辑核心数.
+- =n%=, 按百分比分配逻辑核心数.
+除 =0=, =0/m=, =0%= 外, 其他非整数情况都会向上取整.
+
+*** restart
+#+BEGIN_EXAMPLE typescript
+function restart(force: boolean = false): void
+#+END_EXAMPLE
+
+以相同的启动参数重启, 默认情况下会执行优雅退出.
+如果 =force=true=, 则会强制重启.
+
+*** exit
+#+BEGIN_EXAMPLE typescript
+function exit(force: boolean = false): void
+#+END_EXAMPLE
+
+关闭守护进程, 默认情况下会执行优雅退出.
+如果 =force=true=, 则会强制关闭.

@@ -13,11 +13,11 @@ Gado是一个将Node.js模块作为守护进程使用的启动器.
     同时可以避免增加额外的身份验证步骤.
 
 ** Install
-#+BEGIN_EXAMPLE sh
+#+BEGIN_SRC sh
 npm install -g gado
 # or
 yarn global add gado
-#+END_EXAMPLE
+#+END_SRC
 
 ** 并发模式
 Gado有三种并发模式, 并发模式在启动时就已确定, 不能更改:
@@ -31,7 +31,7 @@ Gado有三种并发模式, 并发模式在启动时就已确定, 不能更改:
 *** 元模块
 元模块用于决定守护进程的一些高级行为, 元模块是可省略的.
 
-#+BEGIN_EXAMPLE typescript
+#+BEGIN_SRC typescript
 interface IMetaModule<T> {
   /*
    * init返回一个Observable, 该Observable会被订阅, 发出的值会用作任务的params.
@@ -50,12 +50,12 @@ interface IMetaModule<T> {
   final?: (reason: 'exit') => void | PromiseLike<void>
   final?: (reason: 'error', error: Error) => void | PromiseLike<void>
 }
-#+END_EXAMPLE
+#+END_SRC
 
 *** 任务模块
 任务模块是守护进程的基本单元, 它在Gado的管理下并发运行, 任务模块不可省略.
 
-#+BEGIN_EXAMPLE typescript
+#+BEGIN_SRC typescript
 interface ITaskModule<T> {
   /*
    * default函数结束的定义:
@@ -72,7 +72,7 @@ interface ITaskModule<T> {
    */
   default(signal: AbortSignal, params: T): void | PromiseLike<void>
 }
-#+END_EXAMPLE
+#+END_SRC
 
 ** 自注册
 Gado支持通过Webhook完成守护进程的自注册, 这允许通过中心化设施管理多个Gado守护进程.
@@ -81,31 +81,31 @@ Gado支持通过Webhook完成守护进程的自注册, 这允许通过中心化�
 Gado的WebSocket接口是建立在[[https://github.com/delight-rpc/delight-rpc][delight-rpc]] 1.0协议上的RPC接口.
 
 *** ping
-#+BEGIN_EXAMPLE typescript
+#+BEGIN_SRC typescript
 function ping(): 'pong'
-#+END_EXAMPLE
+#+END_SRC
 
 显式连通性检查, 固定返回 =pong=.
 
 尽管该接口可用作心跳包, 但更建议使用WebSocket协议自带的ping/pong帧机制.
 
 *** getInfo
-#+BEGIN_EXAMPLE typescript
+#+BEGIN_SRC typescript
 function getInfo(): {
   id: string // 守护进程的唯一标识符, 如果在启动时未手动指定, 则会生成一个随机id
   label: string // 守护进程的标签
   mode: 'async' | 'thread' | 'process' // 并发模式
 }
-#+END_EXAMPLE
+#+END_SRC
 
 获取守护进程的基本信息.
 
 *** getStatus
 获取守护进程的当前状态.
 
-#+BEGIN_EXAMPLE typescript
+#+BEGIN_SRC typescript
 function getStatus(): 'idle' | 'running' | 'scaling' | 'exiting'
-#+END_EXAMPLE
+#+END_SRC
 
 - =idle=: 守护进程的当前和目标并发数都为0, 正处于空闲状态.
 - =running=: 守护进程照常运行.
@@ -113,19 +113,19 @@ function getStatus(): 'idle' | 'running' | 'scaling' | 'exiting'
 - =exiting=: 守护进程正在受理退出指令.
 
 *** getConcurrency
-#+BEGIN_EXAMPLE typescript
+#+BEGIN_SRC typescript
 function getConcurrency(): {
   current: number
   target: number
 }
-#+END_EXAMPLE
+#+END_SRC
 
 返回守护进程的并发数和目标并发数, 返回以下JSON:
 
 *** setConcurrency
-#+BEGIN_EXAMPLE typescript
+#+BEGIN_SRC typescript
 function setConcurrency(val: number | string): void
-#+END_EXAMPLE
+#+END_SRC
 设置守护进程的目标并发数, 这会导致守护进程启动或关闭任务.
 将并发数设为0会关闭所有任务, 但不会导致守护进程退出.
 该操作会立即返回, 不会等到达到目标并发数时才返回.
@@ -140,9 +140,9 @@ function setConcurrency(val: number | string): void
 除 =0=, =0/m=, =0%= 外, 其他非整数情况都会向上取整.
 
 *** exit
-#+BEGIN_EXAMPLE typescript
+#+BEGIN_SRC typescript
 function exit(force: boolean = false): void
-#+END_EXAMPLE
+#+END_SRC
 
 关闭守护进程, 默认情况下会执行优雅退出.
 如果 =force=true=, 则会强制关闭.

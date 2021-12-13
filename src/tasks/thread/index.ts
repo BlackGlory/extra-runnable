@@ -1,41 +1,32 @@
 import { createClient } from '@delight-rpc/worker-threads'
 import { ClientProxy } from 'delight-rpc'
 import { Worker } from 'worker_threads'
-import { assert } from '@blackglory/errors'
 import { Deferred } from 'extra-promise'
 import { ITaskFactory, Mode, ITask, TaskStatus } from '@src/types'
 import { IAPI } from './types'
 import { pass } from '@blackglory/pass'
 import { go } from '@blackglory/go'
 import * as path from 'path'
+import { FiniteStateMachine } from '@blackglory/structures'
+import { schema } from '@tasks/utils'
 
 const workerFilename = path.resolve(__dirname, './worker.js')
 
 class ThreadTask<T> implements ITask<T> {
-  private status = TaskStatus.Ready
   private task?: Deferred<void>
   private worker?: Worker
   private client?: ClientProxy<IAPI>
   private cancelClient?: () => void
+  private fsm = new FiniteStateMachine(schema, TaskStatus.Ready)
 
   constructor(private filename: string) {}
 
   getStatus() {
-    return this.status
-  }
-
-  private setStatus(status: TaskStatus): void {
-    this.status = status
+    return this.fsm.state
   }
 
   async start(params: T): Promise<void> {
-    assert(
-      this.status === TaskStatus.Ready ||
-      this.status === TaskStatus.Stopped ||
-      this.status === TaskStatus.Completed ||
-      this.status === TaskStatus.Error
-    )
-    this.setStatus(TaskStatus.Running)
+    this.fsm.send('run')
 
     this.worker = new Worker(workerFilename)
     ;[this.client, this.cancelClient] = createClient<IAPI>(this.worker)
@@ -47,17 +38,17 @@ class ThreadTask<T> implements ITask<T> {
       try {
         await this.client?.run(this.filename, params)
 
-        if (this.status === TaskStatus.Stopping) {
-          this.setStatus(TaskStatus.Stopped)
+        if (this.fsm.matches(TaskStatus.Stopping)) {
+          this.fsm.send('stopEnd')
         } else {
-          this.setStatus(TaskStatus.Completed)
+          this.fsm.send('complete')
         }
         this.task?.resolve()
       } catch (e) {
-        if(this.status === TaskStatus.Stopping) {
-          this.setStatus(TaskStatus.Stopped)
+        if (this.fsm.matches(TaskStatus.Stopping)) {
+          this.fsm.send('stopEnd')
         } else {
-          this.setStatus(TaskStatus.Error)
+          this.fsm.send('error')
         }
         this.task?.reject(e)
         throw e
@@ -68,8 +59,7 @@ class ThreadTask<T> implements ITask<T> {
   }
 
   async stop(): Promise<void> {
-    assert(this.status === TaskStatus.Running)
-    this.setStatus(TaskStatus.Stopping)
+    this.fsm.send('stopBegin')
 
     await this.client!.abort()
     await this.task

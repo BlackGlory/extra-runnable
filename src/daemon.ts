@@ -5,15 +5,33 @@ import { isString, isntNull } from '@blackglory/types'
 import { find } from 'iterable-operator'
 import { go } from '@blackglory/go'
 import { Mutex, ReusableDeferred, delay } from 'extra-promise'
-import { assert } from '@blackglory/errors'
 import { debug as createDebug } from 'debug'
 import { calculateExponentialBackoffTimeout } from 'extra-timers'
 import { pass } from '@blackglory/pass'
 import ms from 'ms'
+import { FiniteStateMachine, IFiniteStateMachineSchema } from '@blackglory/structures'
 const debug = createDebug('daemon')
 
+type Event = 'normal' | 'idle' | 'scale' | 'exit'
+const schema: IFiniteStateMachineSchema<DaemonStatus, Event> = {
+  [DaemonStatus.Idle]: {
+    normal: DaemonStatus.Running
+  , scale: DaemonStatus.Scaling
+  , exit: DaemonStatus.Exiting
+  }
+, [DaemonStatus.Running]: {
+    exit: DaemonStatus.Exiting
+  , scale: DaemonStatus.Scaling
+  }
+, [DaemonStatus.Scaling]: {
+    exit: DaemonStatus.Exiting
+  , idle: DaemonStatus.Idle
+  , normal: DaemonStatus.Running
+  }
+, [DaemonStatus.Exiting]: {}
+}
+
 export class Daemon implements IAPI {
-  private status: DaemonStatus = DaemonStatus.Idle
   private id: string
   private label: string
   private tasks = new Set<ITask<unknown>>()
@@ -23,6 +41,7 @@ export class Daemon implements IAPI {
   protected params = new ReusableDeferred<unknown>()
   private final?: (reason: Reason, error?: Error) => void | PromiseLike<void>
   private retries = 0
+  private fsm = new FiniteStateMachine(schema, DaemonStatus.Idle)
 
   constructor({ id, label, taskFactory, metaModule }: {
     id: string
@@ -69,11 +88,7 @@ export class Daemon implements IAPI {
   }
 
   getStatus(): DaemonStatus {
-    return this.status
-  }
-
-  private setStatus(status: DaemonStatus): void {
-    this.status = status
+    return this.fsm.state
   }
 
   getConcurrency() {
@@ -84,12 +99,7 @@ export class Daemon implements IAPI {
   }
   
   setConcurrency(val: number | string): void {
-    assert(
-      this.status === DaemonStatus.Idle ||
-      this.status === DaemonStatus.Running ||
-      this.status === DaemonStatus.Scaling
-    )
-    this.setStatus(DaemonStatus.Scaling)
+    this.fsm.send('scale')
 
     go(async () => {
       const target = isString(val) ? parseConcurrency(val) : val
@@ -99,20 +109,15 @@ export class Daemon implements IAPI {
       }
 
       if (this.tasks.size === 0) {
-        this.setStatus(DaemonStatus.Idle)
+        this.fsm.send('idle')
       } else {
-        this.setStatus(DaemonStatus.Running)
+        this.fsm.send('normal')
       }
     })
   }
 
   exit(): void {
-    assert(
-      this.status === DaemonStatus.Idle ||
-      this.status === DaemonStatus.Running ||
-      this.status === DaemonStatus.Scaling
-    )
-    this.setStatus(DaemonStatus.Exiting)
+    this.fsm.send('exit')
 
     go(async () => {
       this.targetConcurrency = 0
@@ -127,7 +132,7 @@ export class Daemon implements IAPI {
   }
 
   private error(err: Error): void {
-    this.setStatus(DaemonStatus.Exiting)
+    this.fsm.send('exit')
 
     go(async () => {
       this.targetConcurrency = 0

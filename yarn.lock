@@ -536,6 +536,17 @@
     extra-timers "^0.2.2"
     justypes "^0.1.6"
 
+"@blackglory/structures@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@blackglory/structures/-/structures-0.3.1.tgz#3308a8d33a967d9acf74c05f01ff70b3cf814ff3"
+  integrity sha512-lmrEWrYOZM7IziO1gkyqddqXw/TZ/ITbfBz72tLVKjLZdhIDMStbRk3IXJHeEC65LrOkLfqy5EiOh+xJqDcJRA==
+  dependencies:
+    "@blackglory/errors" "^1.1.2"
+    "@blackglory/types" "^0.5.2"
+    extra-timers "^0.2.4"
+    iterable-operator "^0.14.4"
+    rxjs "^7.4.0"
+
 "@blackglory/types@^0.4.6":
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-0.4.7.tgz#c704911ec8f8fa09c5c9b1f51d57c80f6aad1dc2"
@@ -2824,6 +2835,13 @@ extra-timers@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/extra-timers/-/extra-timers-0.2.3.tgz#a3cf1c67c412bbc9010133ffba83fff7b483f543"
   integrity sha512-o9OcPrp64ud39M7CFb+w3Ojkf7KlemQFMzBuGUb925IB2kBWF2uzpFCKbIuaHQuXtY31FXrkcLIQ8lnFGOHqUQ==
+  dependencies:
+    extra-rand "^0.1.0"
+
+extra-timers@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/extra-timers/-/extra-timers-0.2.4.tgz#6cd6b14317df195d5be77624ae428239bc0d5a9b"
+  integrity sha512-xOuQG6o9jcSF73Jfw/uOuPsQG8JOqR1gbpHyH0VmJOHnqO5Tt/+CRhb26aryKN8FX0ST7/myi8gLMleSwyVJJA==
   dependencies:
     extra-rand "^0.1.0"
 

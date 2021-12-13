@@ -8,6 +8,7 @@
   , "paths": {
       "@src/*": ["src/*"]
     , "@utils/*": ["src/utils/*"]
+    , "@tasks/*": ["src/tasks/*"]
     , "@test/*": ["__tests__/*"]
     }
   }

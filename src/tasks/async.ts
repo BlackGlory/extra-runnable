@@ -5,30 +5,22 @@ import { Deferred } from 'extra-promise'
 import { isFunction } from '@blackglory/types'
 import { pass } from '@blackglory/pass'
 import { go } from '@blackglory/go'
+import { FiniteStateMachine } from '@blackglory/structures'
+import { schema } from '@tasks/utils'
 
 class AsyncTask<T> implements ITask<T> {
-  private status = TaskStatus.Ready
   private controller?: AbortController
   private task?: Deferred<void>
+  private fsm = new FiniteStateMachine(schema, TaskStatus.Ready)
 
   constructor(private module: ITaskModule<T>) {}
 
   getStatus() {
-    return this.status
-  }
-
-  private setStatus(status: TaskStatus): void {
-    this.status = status
+    return this.fsm.state
   }
 
   async start(params: T): Promise<void> {
-    assert(
-      this.status === TaskStatus.Ready ||
-      this.status === TaskStatus.Stopped ||
-      this.status === TaskStatus.Completed ||
-      this.status === TaskStatus.Error
-    )
-    this.setStatus(TaskStatus.Running)
+    this.fsm.send('run')
 
     const controller = new AbortController()
     this.controller = controller
@@ -39,18 +31,19 @@ class AsyncTask<T> implements ITask<T> {
     await go(async () => {
       try {
         await this.module.default(controller.signal, params)
-        if (this.status === TaskStatus.Stopping) {
-          this.setStatus(TaskStatus.Stopped)
+
+        if (this.fsm.matches(TaskStatus.Stopping)) {
+          this.fsm.send('stopEnd')
         } else {
-          this.setStatus(TaskStatus.Completed)
+          this.fsm.send('complete')
         }
         this.task?.resolve()
       } catch (e) {
         go(() => {
-          if (this.status === TaskStatus.Stopping) {
-            this.setStatus(TaskStatus.Stopped)
+          if (this.fsm.matches(TaskStatus.Stopping)) {
+            this.fsm.send('stopEnd')
           } else {
-            this.setStatus(TaskStatus.Error)
+            this.fsm.send('error')
           }
         })
         this.task?.reject(e)
@@ -62,8 +55,7 @@ class AsyncTask<T> implements ITask<T> {
   }
 
   async stop(): Promise<void> {
-    assert(this.status === TaskStatus.Running)
-    this.setStatus(TaskStatus.Stopping)
+    this.fsm.send('stopBegin')
 
     this.controller!.abort()
     await this.task

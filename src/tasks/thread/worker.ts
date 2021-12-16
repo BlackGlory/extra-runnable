@@ -3,7 +3,6 @@ import { parentPort, isMainThread } from 'worker_threads'
 import { ITaskModule } from '@src/types'
 import { IAPI, WorkerStatus } from './types'
 import { assert } from '@blackglory/errors'
-import { AbortController } from 'abort-controller'
 
 assert(!isMainThread)
 assert(parentPort)

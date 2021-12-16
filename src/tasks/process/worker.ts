@@ -2,7 +2,6 @@ import { createServer } from '@delight-rpc/child-process'
 import { ITaskModule } from '@src/types'
 import { IAPI, WorkerStatus } from './types'
 import { assert } from '@blackglory/errors'
-import { AbortController } from 'abort-controller'
 
 let status: WorkerStatus = WorkerStatus.Idle
 let controller: AbortController

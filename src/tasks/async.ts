@@ -1,5 +1,4 @@
 import { ITaskFactory, Mode, ITask, ITaskModule, TaskStatus } from '@src/types'
-import { AbortController } from 'abort-controller'
 import { assert } from '@blackglory/errors'
 import { Deferred } from 'extra-promise'
 import { isFunction } from '@blackglory/types'

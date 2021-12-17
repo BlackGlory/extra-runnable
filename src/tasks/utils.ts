@@ -7,15 +7,15 @@ export const schema: IFiniteStateMachineSchema<TaskStatus, Event> = {
   [TaskStatus.Ready]: {
     run: TaskStatus.Running
   }
-, running: {
+, [TaskStatus.Running]: {
     stopBegin: TaskStatus.Stopping
   , complete: TaskStatus.Completed
   , error: TaskStatus.Error
   }
-, stopping: {
+, [TaskStatus.Stopping]: {
     stopEnd: TaskStatus.Stopped
   }
-, stopped: {}
-, completed: {}
-, error: {}
+, [TaskStatus.Stopped]: {}
+, [TaskStatus.Completed]: {}
+, [TaskStatus.Error]: {}
 }

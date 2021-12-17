@@ -1,37 +1,36 @@
 import { createServer } from '@delight-rpc/worker-threads'
 import { parentPort, isMainThread } from 'worker_threads'
 import { ITaskModule } from '@src/types'
-import { IAPI, WorkerStatus } from './types'
+import { IAPI, WorkerStatus, schema } from './types'
+import { FiniteStateMachine } from '@blackglory/structures'
 import { assert } from '@blackglory/errors'
 
 assert(!isMainThread)
 assert(parentPort)
 
-let status: WorkerStatus = WorkerStatus.Idle
+const fsm = new FiniteStateMachine(schema, WorkerStatus.Idle)
 let controller: AbortController
 
 createServer<IAPI>({ run, abort, getStatus }, parentPort)
 
 async function run(filename: string, params: unknown): Promise<void> {
-  assert(status === WorkerStatus.Idle)
-  status = WorkerStatus.Running
+  fsm.send('run')
 
   const module = require(filename) as ITaskModule<unknown>
   controller = new AbortController()
   try {
     await module.default(controller.signal, params)
   } finally {
-    status = WorkerStatus.Idle
+    fsm.send('end')
   }
 }
 
 function abort(): void {
-  assert(status === WorkerStatus.Running)
-  status = WorkerStatus.Aborting
+  fsm.send('abort')
 
   controller.abort()
 }
 
 function getStatus(): WorkerStatus {
-  return status
+  return fsm.state
 }

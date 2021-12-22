@@ -6,6 +6,7 @@ import { pass } from '@blackglory/pass'
 import { go } from '@blackglory/go'
 import { FiniteStateMachine } from '@blackglory/structures'
 import { schema } from '@tasks/utils'
+import { AbortController } from 'extra-abort'
 
 class AsyncTask<T> implements ITask<T> {
   private controller?: AbortController

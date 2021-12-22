@@ -4,6 +4,7 @@ import { ITaskModule } from '@src/types'
 import { IAPI, WorkerStatus, schema } from './types'
 import { FiniteStateMachine } from '@blackglory/structures'
 import { assert } from '@blackglory/errors'
+import { AbortController } from 'extra-abort'
 
 assert(!isMainThread)
 assert(parentPort)

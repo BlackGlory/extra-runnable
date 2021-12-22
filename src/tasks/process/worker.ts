@@ -2,6 +2,7 @@ import { createServer } from '@delight-rpc/child-process'
 import { ITaskModule } from '@src/types'
 import { IAPI, WorkerStatus, schema } from './types'
 import { FiniteStateMachine } from '@blackglory/structures'
+import { AbortController } from 'extra-abort'
 
 const fsm = new FiniteStateMachine(schema, WorkerStatus.Idle)
 let controller: AbortController

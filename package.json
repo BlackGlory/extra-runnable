@@ -65,6 +65,7 @@
     "@delight-rpc/worker-threads": "^2.0.1",
     "commander": "^8.3.0",
     "delight-rpc": "^1.1.2",
+    "extra-abort": "^0.1.0",
     "extra-promise": "^0.21.0",
     "extra-timers": "^0.2.4",
     "hardware-concurrency": "^0.1.1",

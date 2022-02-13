@@ -6,8 +6,8 @@ import { FiniteStateMachine } from '@blackglory/structures'
 import { assert } from '@blackglory/errors'
 import { AbortController } from 'extra-abort'
 
-assert(!isMainThread)
-assert(parentPort)
+assert(!isMainThread, 'This worker should not be run on main thread')
+assert(parentPort, 'This worker should be run on worker thread')
 
 const fsm = new FiniteStateMachine(schema, WorkerStatus.Idle)
 let controller: AbortController

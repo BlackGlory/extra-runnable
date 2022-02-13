@@ -74,7 +74,7 @@ export class AsyncTaskFactory<T> implements ITaskFactory<T> {
 
   create(): ITask<T> {
     const module = require(this.filename) as ITaskModule<T>
-    assert(isFunction(module.default))
+    assert(isFunction(module.default), 'Task module must export default function')
 
     return new AsyncTask(module)
   }

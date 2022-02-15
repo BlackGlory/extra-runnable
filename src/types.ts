@@ -45,6 +45,7 @@ export enum Reason {
 
 export interface IMetaModule<T> {
   init?: () => Observable<T>
+  observeConcurrency?: () => Observable<number>
   final?: (reason: Reason, error?: Error) => void | PromiseLike<void>
 }
 

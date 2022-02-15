@@ -42,6 +42,11 @@ interface IMetaModule<T> {
    * Observable到达error状态会导致守护进程以非0状态码终止运行.
    */
   init?: () => Observable<T>
+
+  /*
+   * observeConcurrency返回一个Observable, 该Observable会被订阅, 发出的值会用作Daemon的concurrency.
+   */
+  observeConcurrency?: () => Observable<number>
   
   /*
    * 这是一个钩子, 当守护进程退出时, 会调用它执行清理工作.

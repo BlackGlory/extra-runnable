@@ -59,7 +59,32 @@ export class Daemon implements IAPI {
     this.label = label
     this.taskFactory = taskFactory
     this._exitProcess = _exitProcess
+    this.initMetaModule(metaModule)
+  }
 
+  private initMetaModule(metaModule: IMetaModule<unknown>): void {
+    this.initInit(metaModule)
+    this.initObserveConcurrency(metaModule)
+    this.initFinal(metaModule)
+  }
+
+  private initFinal(metaModule: IMetaModule<unknown>): void {
+    this.final = metaModule.final
+  }
+
+  private initObserveConcurrency(metaModule: IMetaModule<unknown>): void {
+    if (metaModule.observeConcurrency) {
+      const subscription = metaModule.observeConcurrency().subscribe({
+        next: concurrency => {
+          this.setConcurrency(concurrency)
+        }
+      , error: err => this.error(err)
+      })
+      this.destructor.defer(() => subscription.unsubscribe())
+    }
+  }
+
+  private initInit(metaModule: IMetaModule<unknown>): void {
     if (metaModule.init) {
       let emitted = false
 
@@ -79,8 +104,6 @@ export class Daemon implements IAPI {
     } else {
       this.params.resolve(undefined)
     }
-
-    this.final = metaModule.final
   }
 
   ping() {

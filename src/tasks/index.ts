@@ -1,3 +1,3 @@
-export * from './async'
-export * from './thread'
-export * from './process'
+export * from './async.js'
+export * from './thread/index.js'
+export * from './process/index.js'

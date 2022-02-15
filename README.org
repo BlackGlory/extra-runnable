@@ -1,6 +1,6 @@
 * Gado
 Gado是一个将Node.js模块作为守护进程使用的启动器.
-模块必须是一个可通过require函数导入的模块对象, 在业界完成向ESM的转变之前, 暂不支持ESM.
+模块必须是一个可通过import函数导入的文件.
 
 ** 特性
 - 三种不同的运行模式.
@@ -78,7 +78,7 @@ interface ITaskModule<T> {
 Gado支持通过Webhook完成守护进程的自注册, 这允许通过中心化设施管理多个Gado守护进程.
 
 ** API
-Gado的WebSocket接口是建立在[[https://github.com/delight-rpc/delight-rpc][delight-rpc]] 1.0协议上的RPC接口.
+Gado的WebSocket接口是建立在[[https://github.com/delight-rpc/delight-rpc][delight-rpc]] 2.0协议上的RPC接口.
 
 *** ping
 #+BEGIN_SRC typescript

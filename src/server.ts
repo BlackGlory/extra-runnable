@@ -1,10 +1,10 @@
 import { createServer } from '@delight-rpc/websocket'
-import { Daemon } from './daemon'
-import { IAPI } from '@src/types'
-import { Server } from 'ws'
+import { Daemon } from './daemon.js'
+import { IAPI } from '@src/types.js'
+import ws from 'ws'
 
-export function startServer(daemon: Daemon, port: number): Server {
-  const server = new Server({ port })
+export function startServer(daemon: Daemon, port: number): ws.Server {
+  const server = new ws.Server({ port })
   server.on('connection', socket => {
     const close = createServer<IAPI>(daemon, socket)
     socket.once('close', () => close())

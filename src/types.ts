@@ -1,4 +1,11 @@
 import { Observable } from 'rxjs'
+import { CustomError } from '@blackglory/errors'
+
+export class FatalError extends CustomError {
+  constructor(message?: unknown) {
+    super(message ? `${message}` : undefined)
+  }
+}
 
 export enum Mode {
   Async = 'async'
@@ -14,7 +21,7 @@ export enum DaemonStatus {
    * 隐式带有Running的语义
    */
 , Scaling = 'scaling'
-  
+
   /**
    * 隐式带有Scaling的语义, 但不带有Running的语义
    */
@@ -23,6 +30,7 @@ export enum DaemonStatus {
 
 export enum TaskStatus {
   Ready = 'ready'
+, Starting = 'starting'
 , Running = 'running'
 , Stopping = 'stopping'
 , Stopped = 'stopped'
@@ -49,6 +57,8 @@ export interface ITask<T> {
 
   /**
    * 返回一个Promise, 当任务终止运行时该Promise会达到resolved, 如果任务抛出错误, 则会达到rejected.
+   * 
+   * @throws {FatalError} 
    */
   start(params: T): Promise<void>
 
@@ -63,7 +73,7 @@ export interface ITaskFactory<T> {
   readonly mode: Mode
   readonly filename: string
 
-  create(): ITask<T>
+  create(): ITask<T> | Promise<ITask<T>>
 }
 
 export interface IAPI {

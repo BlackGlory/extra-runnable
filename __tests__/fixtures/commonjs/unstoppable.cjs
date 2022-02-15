@@ -1,4 +1,4 @@
-const { delay } = require('./utils')
+const { delay } = require('./utils.cjs')
 
 exports.default = async function () {
   while (true) {

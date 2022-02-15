@@ -1,20 +1,15 @@
-import { ThreadTaskFactory } from '@src/tasks/thread'
-import { Daemon } from '@src/daemon'
-import { getFixturePath } from '@test/utils'
+import { ThreadTaskFactory } from '@src/tasks/thread/index.js'
+import { Daemon } from '@src/daemon.js'
+import { getFixturePath } from '@test/utils.js'
 import { DaemonStatus, IMetaModule, Reason } from '@src/types'
-import { exitProcess } from '@utils/exit-process'
 import { waitForFunction, waitForTimeout } from '@blackglory/wait-for'
-import { mocked } from 'jest-mock'
-import { pass } from '@blackglory/pass'
 import { Observable } from 'rxjs'
 import { delay } from 'extra-promise'
 import { go } from '@blackglory/go'
+import { jest } from '@jest/globals'
 
-jest.mock('@utils/exit-process')
-mocked(exitProcess).mockImplementation(pass)
-afterEach(() => {
-  mocked(exitProcess).mockClear()
-})
+const exitProcess = jest.fn()
+afterEach(() => exitProcess.mockClear())
 
 describe('Daemon', () => {
   test('default is idle', () => {
@@ -66,7 +61,7 @@ describe('Daemon', () => {
 
     describe('emit completed', () => {
       test('before first value', async () => {
-        const final = jest.fn()
+        const final = jest.fn<any, any>()
         const daemon = createDaemon({
           metaModule: {
             init() {
@@ -113,7 +108,7 @@ describe('Daemon', () => {
     describe('emit error', () => {
       it('should be crash because error', async () => {
         const error = new Error('custom error')
-        const final = jest.fn()
+        const final = jest.fn<any, any>()
         const daemon = createDaemon({
           metaModule: {
             init() {
@@ -180,7 +175,7 @@ describe('Daemon', () => {
 
         daemon.setConcurrency(target)
         expect(daemon.getStatus()).toBe(DaemonStatus.Scaling)
-        await waitForFunction(() => daemon.getConcurrency().current === target)
+        await waitForFunction(async () => daemon.getConcurrency().current === target)
         expect(daemon.getStatus()).toBe(DaemonStatus.Running)
 
         expect(daemon.getConcurrency()).toStrictEqual({
@@ -206,7 +201,7 @@ describe('Daemon', () => {
   })
 
   test('exit()', async () => {
-    const final = jest.fn()
+    const final = jest.fn<any, any>()
     const daemon = createDaemon({
       metaModule: { final }
     })
@@ -232,13 +227,14 @@ function createDaemon(params?: {
   metaModule?: IMetaModule<unknown>
   taskFilename?: string
 }) {
-  const taskFilename = params?.taskFilename ?? getFixturePath('stopable.js')
+  const taskFilename = params?.taskFilename ?? getFixturePath('esm/stopable.js')
 
   return new TestDaemon({
     id: 'test-id'
   , label: 'test-label'
   , taskFactory: new ThreadTaskFactory(taskFilename)
   , metaModule: params?.metaModule ?? {}
+  , _exitProcess: exitProcess
   })
 }
 

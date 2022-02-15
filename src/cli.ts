@@ -1,19 +1,23 @@
 #!/usr/bin/env node
 import { program } from 'commander'
 import { assert } from '@blackglory/errors'
-import { debug as createDebug } from 'debug'
-import { parseConcurrency } from '@utils/parse-concurrency'
+import createDebug from 'debug'
+import { parseConcurrency } from '@utils/parse-concurrency.js'
 import { isntNull, isUndefined } from '@blackglory/types'
-import { Daemon } from './daemon'
-import { startServer } from './server'
-import { registerInRegistry } from './registry'
-import { Mode, ITaskFactory } from './types'
-import { AsyncTaskFactory, ThreadTaskFactory, ProcessTaskFactory } from './tasks'
+import { Daemon } from './daemon.js'
+import { startServer } from './server.js'
+import { registerInRegistry } from './registry.js'
+import { Mode, ITaskFactory } from './types.js'
+import { AsyncTaskFactory, ThreadTaskFactory, ProcessTaskFactory } from './tasks/index.js'
 import { nanoid } from 'nanoid'
-import * as path from 'path'
-const debug = createDebug('cli')
+import path from 'path'
+import { fileURLToPath } from 'node:url'
+import { readJSONFileSync } from 'extra-filesystem'
+import { importMetaModule } from '@utils/import-module.js'
 
-const pkg = require('../package.json')
+const pkgFilename = fileURLToPath(new URL('../package.json', import.meta.url))
+const pkg = readJSONFileSync<{ name: string; version: string; description: string }>(pkgFilename)
+const debug = createDebug('cli')
 
 interface IOptions {
   mode: string
@@ -55,7 +59,7 @@ program
       id
     , label
     , taskFactory: getTaskFactory(mode, taskFilename)
-    , metaModule: metaFilename ? require(metaFilename) : {}
+    , metaModule: metaFilename ? await importMetaModule(metaFilename) : {}
     })
     daemon.setConcurrency(concurrency)
 

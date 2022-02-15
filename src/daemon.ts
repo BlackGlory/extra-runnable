@@ -1,21 +1,23 @@
-import { ITask, ITaskFactory, DaemonStatus, IMetaModule, Reason, IAPI, TaskStatus } from '@src/types'
-import { exitProcess } from '@utils/exit-process'
-import { parseConcurrency } from '@utils/parse-concurrency'
+import { ITask, ITaskFactory, DaemonStatus, IMetaModule, Reason, IAPI, TaskStatus } from '@src/types.js'
+import { exitProcess } from '@utils/exit-process.js'
+import { parseConcurrency } from '@utils/parse-concurrency.js'
 import { isString, isntNull } from '@blackglory/types'
 import { find } from 'iterable-operator'
 import { go } from '@blackglory/go'
 import { Mutex, ReusableDeferred, delay } from 'extra-promise'
-import { debug as createDebug } from 'debug'
+import createDebug from 'debug'
 import { calculateExponentialBackoffTimeout } from 'extra-timers'
-import { pass } from '@blackglory/pass'
 import ms from 'ms'
 import { FiniteStateMachine, IFiniteStateMachineSchema } from '@blackglory/structures'
+import { Destructor } from '@blackglory/destructor'
+import { FatalError } from './types.js'
+
 const debug = createDebug('daemon')
 
-type Event = 'normal' | 'idle' | 'scale' | 'exit'
+type Event = 'start' | 'stop' | 'scaled' | 'idle' | 'scale' | 'exit'
 const schema: IFiniteStateMachineSchema<DaemonStatus, Event> = {
   [DaemonStatus.Idle]: {
-    normal: DaemonStatus.Running
+    start: DaemonStatus.Running
   , scale: DaemonStatus.Scaling
   , exit: DaemonStatus.Exiting
   }
@@ -25,8 +27,8 @@ const schema: IFiniteStateMachineSchema<DaemonStatus, Event> = {
   }
 , [DaemonStatus.Scaling]: {
     exit: DaemonStatus.Exiting
-  , idle: DaemonStatus.Idle
-  , normal: DaemonStatus.Running
+  , stop: DaemonStatus.Idle
+  , scaled: DaemonStatus.Running
   }
 , [DaemonStatus.Exiting]: {}
 }
@@ -42,32 +44,38 @@ export class Daemon implements IAPI {
   private final?: (reason: Reason, error?: Error) => void | PromiseLike<void>
   private retries = 0
   private fsm = new FiniteStateMachine(schema, DaemonStatus.Idle)
+  private _exitProcess: (error?: Error) => void
+  private destructor = new Destructor()
 
-  constructor({ id, label, taskFactory, metaModule }: {
+  constructor({ id, label, taskFactory, metaModule, _exitProcess = exitProcess }: {
     id: string
   , label: string
   , taskFactory: ITaskFactory<unknown>
   , metaModule: IMetaModule<unknown>
+    // 专用于测试的注入口, 直到jest支持对mock ESM项目为止
+  , _exitProcess?: (error?: Error) => void
   }) {
     this.id = id
     this.label = label
     this.taskFactory = taskFactory
+    this._exitProcess = _exitProcess
 
     if (metaModule.init) {
       let emitted = false
 
-      metaModule.init().subscribe({
+      const subscription = metaModule.init().subscribe({
         next: params => {
           emitted = true
           this.params.resolve(params)
         }
       , complete: () => {
           if (!emitted) {
-            this.error(new Error('The observable complete before any value is emitted'))
+            this.error(new FatalError('The observable complete before any value is emitted'))
           }
         }
       , error: err => this.error(err)
       })
+      this.destructor.defer(() => subscription.unsubscribe())
     } else {
       this.params.resolve(undefined)
     }
@@ -99,20 +107,15 @@ export class Daemon implements IAPI {
   }
   
   setConcurrency(val: number | string): void {
-    this.fsm.send('scale')
+    const target = isString(val) ? parseConcurrency(val) : val
+    if (isntNull(target)) {
+      this.targetConcurrency = target
+    }
 
     go(async () => {
-      const target = isString(val) ? parseConcurrency(val) : val
-      if (isntNull(target)) {
-        this.targetConcurrency = target
-        await this.scale()
-      }
-
-      if (this.tasks.size === 0) {
-        this.fsm.send('idle')
-      } else {
-        this.fsm.send('normal')
-      }
+      this.fsm.send('scale')
+      await this.scale()
+      this.fsm.send('scaled')
     })
   }
 
@@ -125,8 +128,9 @@ export class Daemon implements IAPI {
 
       try {
         await this.final?.(Reason.Exit)
+        await this.destructor.execute()
       } finally {
-        exitProcess()
+        this._exitProcess()
       }
     })
   }
@@ -140,24 +144,31 @@ export class Daemon implements IAPI {
 
       try {
         await this.final?.(Reason.Error, err)
+        await this.destructor.execute()
       } finally {
-        exitProcess(err)
+        this._exitProcess(err)
       }
     })
+  }
+
+  private crash(err: Error): void {
+    this._exitProcess(err)
   }
 
   private async scale(): Promise<void> {
     await this.scaleLock.acquire(async () => {
       debug('scaling concurrency %d to %d', this.tasks.size, this.targetConcurrency)
 
-      while (this.tasks.size < this.targetConcurrency) {
-        await this.startTask()
-        debug('current concurrency: %d', this.tasks.size)
-      }
+      while (this.tasks.size !== this.targetConcurrency) {
+        while (this.tasks.size < this.targetConcurrency) {
+          await this.startTask()
+          debug('current concurrency: %d', this.tasks.size)
+        }
 
-      while (this.tasks.size > this.targetConcurrency) {
-        await this.stopTask()
-        debug('current concurrency: %d', this.tasks.size)
+        while (this.tasks.size > this.targetConcurrency) {
+          await this.stopTask()
+          debug('current concurrency: %d', this.tasks.size)
+        }
       }
     })
   }
@@ -165,10 +176,14 @@ export class Daemon implements IAPI {
   private async startTask(): Promise<void> {
     debug('starting a task')
 
-    const task = this.taskFactory.create()
+    const task = await this.taskFactory.create()
     this.tasks.add(task)
 
-    task.start(await this.params).catch(pass).finally(async () => {
+    task.start(await this.params).catch(err => {
+      if (err instanceof FatalError) {
+        this.crash(err)
+      }
+    }).finally(async () => {
       if (task.getStatus() === TaskStatus.Completed) {
         this.tasks.delete(task)
         await this.scale()
@@ -190,12 +205,10 @@ export class Daemon implements IAPI {
   private async stopTask(): Promise<void> {
     debug('stopping a task')
 
-    const task = find(this.tasks, task => {
-      return task.getStatus() !== TaskStatus.Completed
-          && task.getStatus() !== TaskStatus.Error
-          && task.getStatus() !== TaskStatus.Stopping
-          && task.getStatus() !== TaskStatus.Stopped
-    })
+    const task = find(
+      this.tasks
+    , task => task.getStatus() === TaskStatus.Running
+    )
     if (task) {
       await task.stop()
       this.tasks.delete(task)

@@ -1,5 +1,9 @@
-import * as path from 'path'
+import path from 'path'
+import { fileURLToPath } from 'node:url'
 
-export function getFixturePath(name: string): string {
-  return path.join(__dirname, 'fixtures', name)
+export function getFixturePath(...paths: string[]): string {
+  return path.join(
+    fileURLToPath(new URL('fixtures', import.meta.url))
+  , ...paths
+  )
 }

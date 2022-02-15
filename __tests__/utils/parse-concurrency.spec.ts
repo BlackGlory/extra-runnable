@@ -1,4 +1,4 @@
-import { parseConcurrency } from '@utils/parse-concurrency'
+import { parseConcurrency } from '@utils/parse-concurrency.js'
 import { maxCores, halfCores } from 'hardware-concurrency'
 
 describe('parseConcurrency(text: string): number | null', () => {

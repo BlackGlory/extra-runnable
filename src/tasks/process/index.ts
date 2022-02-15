@@ -2,15 +2,15 @@ import { createClient } from '@delight-rpc/child-process'
 import { ClientProxy } from 'delight-rpc'
 import { fork, ChildProcess } from 'child_process'
 import { Deferred } from 'extra-promise'
-import { ITaskFactory, Mode, ITask, TaskStatus } from '@src/types'
-import { IAPI } from './types'
-import * as path from 'path'
+import { ITaskFactory, Mode, ITask, TaskStatus } from '@src/types.js'
+import { IAPI } from './types.js'
 import { pass } from '@blackglory/pass'
-import { go } from '@blackglory/go'
 import { FiniteStateMachine } from '@blackglory/structures'
-import { schema } from '@tasks/utils'
+import { schema } from '@tasks/utils.js'
+import { fileURLToPath } from 'node:url'
+import { waitForEventEmitter } from '@blackglory/wait-for'
 
-const workerFilename = path.resolve(__dirname, './worker.js')
+const workerFilename = fileURLToPath(new URL('./worker.js', import.meta.url))
 
 class ProcessTask<T> implements ITask<T> {
   private task?: Deferred<void>
@@ -26,40 +26,46 @@ class ProcessTask<T> implements ITask<T> {
   }
 
   async start(params: T): Promise<void> {
-    this.fsm.send('run')
+    this.fsm.send('start')
 
     this.childProcess = fork(workerFilename, { serialization: 'advanced' })
+    // 在使用ES模块时, 子进程的message事件不会在注册listener前阻塞.
+    // 为解决此问题, 需要等子进程先通知自己已经准备好.
+    // 该问题可能在v17.4.0里得到解决, 在项目的最低版本升级到v18时, 可以试试取消相关代码.
+    // - https://github.com/nodejs/node/issues/34785
+    // - https://github.com/nodejs/node/pull/41221
+    await waitForEventEmitter(this.childProcess, 'message')
     ;[this.client, this.cancelClient] = createClient<IAPI>(this.childProcess)
 
     this.task = new Deferred<void>()
     Promise.resolve(this.task).catch(pass)
 
-    await go(async () => {
-      try {
-        await this.client?.run(this.filename, params)
+    try {
+      const promise = this.client?.run(this.filename, params)
+      this.fsm.send('started')
+      await promise
 
-        if (this.fsm.matches(TaskStatus.Stopping)) {
-          this.fsm.send('stopEnd')
-        } else {
-          this.fsm.send('complete')
-        }
-        this.task?.resolve()
-      } catch (e) {
-        if (this.fsm.matches(TaskStatus.Stopping)) {
-          this.fsm.send('stopEnd')
-        } else {
-          this.fsm.send('error')
-        }
-        this.task?.reject(e)
-        throw e
-      } finally {
-        this.destroy()
+      if (this.fsm.matches(TaskStatus.Stopping)) {
+        this.fsm.send('stopped')
+      } else {
+        this.fsm.send('complete')
       }
-    })
+      this.task?.resolve()
+    } catch (e) {
+      if (this.fsm.matches(TaskStatus.Stopping)) {
+        this.fsm.send('stopped')
+      } else {
+        this.fsm.send('error')
+      }
+      this.task?.reject(e)
+      throw e
+    } finally {
+      this.destroy()
+    }
   }
 
   async stop(): Promise<void> {
-    this.fsm.send('stopBegin')
+    this.fsm.send('stop')
 
     await this.client!.abort()
     await this.task

@@ -2,15 +2,20 @@ import { IFiniteStateMachineSchema } from '@blackglory/structures'
 
 export enum WorkerStatus {
   Idle = 'idle'
+, Starting = 'starting'
 , Running = 'running'
 , Aborting = 'aborting'
 }
 
-type Event = 'run' | 'abort' | 'end'
+type Event = 'start' | 'started' | 'abort' | 'end'
 
 export const schema: IFiniteStateMachineSchema<WorkerStatus, Event> = {
   [WorkerStatus.Idle]: {
-    run: WorkerStatus.Running
+    start: WorkerStatus.Starting
+  }
+, [WorkerStatus.Starting]: {
+    started: WorkerStatus.Running
+  , abort: WorkerStatus.Aborting
   }
 , [WorkerStatus.Running]: {
     abort: WorkerStatus.Aborting

@@ -1,6 +1,6 @@
 import { createServer } from '@delight-rpc/websocket'
-import { Daemon } from './daemon'
-import { IAPI } from '@src/types'
+import { Daemon } from './daemon.js'
+import { IAPI } from '@src/types.js'
 import { delay } from 'extra-promise'
 import { calculateExponentialBackoffTimeout } from 'extra-timers'
 import WebSocket from 'ws'

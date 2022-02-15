@@ -1,24 +1,57 @@
-import { ThreadTaskFactory } from '@src/tasks/thread'
-import { TaskStatus } from '@src/types'
+import { ThreadTaskFactory } from '@src/tasks/thread/index.js'
+import { TaskStatus, FatalError } from '@src/types.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
-import { getFixturePath } from '@test/utils'
+import { getFixturePath } from '@test/utils.js'
+import { delay } from 'extra-promise'
 
 describe('ThreadTask', () => {
-  test('ready', () => {
-    const factory = new ThreadTaskFactory(getFixturePath('stopable.js'))
+  describe('module does not exist', () => {
+    it('throws FatalError', async () => {
+      const factory = new ThreadTaskFactory(getFixturePath('not-exist.js'))
+      const task = factory.create()
+
+      const err = await getErrorPromise(task.start(undefined))
+
+      expect(err).toBeInstanceOf(FatalError)
+    })
+  })
+
+  describe.each([
+    'commonjs/bad.cjs'
+  , 'esm/bad.js'
+  ])('bad module (%s)', filename => {
+    it('throws FatalError', async () => {
+      const factory = new ThreadTaskFactory(getFixturePath(filename))
+      const task = factory.create()
+
+      const err = await getErrorPromise(task.start(undefined))
+
+      expect(err).toBeInstanceOf(FatalError)
+    })
+  })
+
+  test.each([
+    'commonjs/stopable.cjs'
+  , 'esm/stopable.js'
+  ])('ready (%s)', filename => {
+    const factory = new ThreadTaskFactory(getFixturePath(filename))
     const task = factory.create()
 
     expect(task.getStatus()).toBe(TaskStatus.Ready)
   })
 
   describe('start(params: T): Promise<void>', () => {
-    test('running', async () => {
-      const factory = new ThreadTaskFactory(getFixturePath('stopable.js'))
+    test.each([
+      'commonjs/stopable.cjs'
+    , 'esm/stopable.js'
+    ])('running (%s)', async filename => {
+      const factory = new ThreadTaskFactory(getFixturePath(filename))
       const task = factory.create()
 
       try {
         task.start(undefined).catch(pass)
+        await delay(1000)
 
         expect(task.getStatus()).toBe(TaskStatus.Running)
       } finally {
@@ -26,8 +59,11 @@ describe('ThreadTask', () => {
       }
     })
 
-    test('completed', async () => {
-      const factory = new ThreadTaskFactory(getFixturePath('completed.js'))
+    test.each([
+      'commonjs/completed.cjs'
+    , 'esm/completed.js'
+    ])('completed (%s)', async filename => {
+      const factory = new ThreadTaskFactory(getFixturePath(filename))
       const task = factory.create()
 
       try {
@@ -39,8 +75,11 @@ describe('ThreadTask', () => {
       }
     })
 
-    test('error', async () => {
-      const factory = new ThreadTaskFactory(getFixturePath('error.js'))
+    test.each([
+      'commonjs/error.cjs'
+    , 'esm/error.js'
+    ])('error (%s)', async filename => {
+      const factory = new ThreadTaskFactory(getFixturePath(filename))
       const task = factory.create()
 
       try {
@@ -55,12 +94,16 @@ describe('ThreadTask', () => {
   })
 
   describe('stop(): Promise<void>', () => {
-    test('stopping', async () => {
-      const factory = new ThreadTaskFactory(getFixturePath('unstoppable.js'))
+    test.each([
+      'commonjs/stopable.cjs'
+    , 'esm/stopable.js'
+    ])('stopping (%s)', async filename => {
+      const factory = new ThreadTaskFactory(getFixturePath(filename))
       const task = factory.create()
 
       try {
         task.start(undefined).catch(pass)
+        await delay(1000)
         task.stop().catch(pass)
 
         expect(task.getStatus()).toBe(TaskStatus.Stopping)
@@ -69,12 +112,16 @@ describe('ThreadTask', () => {
       }
     })
 
-    test('stopped', async () => {
-      const factory = new ThreadTaskFactory(getFixturePath('stopable.js'))
+    test.each([
+      'commonjs/stopable.cjs'
+    , 'esm/stopable.js'
+    ])('stopped (%s)', async filename => {
+      const factory = new ThreadTaskFactory(getFixturePath(filename))
       const task = factory.create()
 
       try {
         task.start(undefined).catch(pass)
+        await delay(1000)
         await task.stop()
 
         expect(task.getStatus()).toBe(TaskStatus.Stopped)
@@ -83,12 +130,16 @@ describe('ThreadTask', () => {
       }
     })
 
-    test('error', async () => {
-      const factory = new ThreadTaskFactory(getFixturePath('error-while-stopping.js'))
+    test.each([
+      'commonjs/error-while-stopping.cjs'
+    , 'esm/error-while-stopping.js'
+    ])('error (%s)', async filename => {
+      const factory = new ThreadTaskFactory(getFixturePath(filename))
       const task = factory.create()
 
       try {
         task.start(undefined).catch(pass)
+        await delay(1000)
         const err = await getErrorPromise(task.stop())
 
         expect(err).toBeInstanceOf(Error)

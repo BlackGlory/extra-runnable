@@ -1,19 +1,23 @@
 import { IFiniteStateMachineSchema } from '@blackglory/structures'
-import { TaskStatus } from '@src/types'
+import { TaskStatus } from '@src/types.js'
 
-type Event = 'run' | 'stopBegin' | 'stopEnd' | 'complete' | 'error'
+type Event = 'start' | 'started' | 'stop' | 'stopped' | 'complete' | 'error'
 
 export const schema: IFiniteStateMachineSchema<TaskStatus, Event> = {
   [TaskStatus.Ready]: {
-    run: TaskStatus.Running
+    start: TaskStatus.Starting
+  }
+, [TaskStatus.Starting]: {
+    started: TaskStatus.Running
+  , error: TaskStatus.Error
   }
 , [TaskStatus.Running]: {
-    stopBegin: TaskStatus.Stopping
+    stop: TaskStatus.Stopping
   , complete: TaskStatus.Completed
   , error: TaskStatus.Error
   }
 , [TaskStatus.Stopping]: {
-    stopEnd: TaskStatus.Stopped
+    stopped: TaskStatus.Stopped
   }
 , [TaskStatus.Stopped]: {}
 , [TaskStatus.Completed]: {}

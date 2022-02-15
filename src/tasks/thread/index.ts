@@ -2,15 +2,14 @@ import { createClient } from '@delight-rpc/worker-threads'
 import { ClientProxy } from 'delight-rpc'
 import { Worker } from 'worker_threads'
 import { Deferred } from 'extra-promise'
-import { ITaskFactory, Mode, ITask, TaskStatus } from '@src/types'
-import { IAPI } from './types'
+import { ITaskFactory, Mode, ITask, TaskStatus } from '@src/types.js'
+import { IAPI } from './types.js'
 import { pass } from '@blackglory/pass'
-import { go } from '@blackglory/go'
-import * as path from 'path'
 import { FiniteStateMachine } from '@blackglory/structures'
-import { schema } from '@tasks/utils'
+import { schema } from '@tasks/utils.js'
+import { fileURLToPath } from 'node:url'
 
-const workerFilename = path.resolve(__dirname, './worker.js')
+const workerFilename = fileURLToPath(new URL('./worker.js', import.meta.url))
 
 class ThreadTask<T> implements ITask<T> {
   private task?: Deferred<void>
@@ -26,7 +25,7 @@ class ThreadTask<T> implements ITask<T> {
   }
 
   async start(params: T): Promise<void> {
-    this.fsm.send('run')
+    this.fsm.send('start')
 
     this.worker = new Worker(workerFilename)
     ;[this.client, this.cancelClient] = createClient<IAPI>(this.worker)
@@ -34,32 +33,32 @@ class ThreadTask<T> implements ITask<T> {
     this.task = new Deferred<void>()
     Promise.resolve(this.task).catch(pass)
 
-    await go(async () => {
-      try {
-        await this.client?.run(this.filename, params)
+    try {
+      const promise = this.client?.run(this.filename, params)
+      this.fsm.send('started')
+      await promise
 
-        if (this.fsm.matches(TaskStatus.Stopping)) {
-          this.fsm.send('stopEnd')
-        } else {
-          this.fsm.send('complete')
-        }
-        this.task?.resolve()
-      } catch (e) {
-        if (this.fsm.matches(TaskStatus.Stopping)) {
-          this.fsm.send('stopEnd')
-        } else {
-          this.fsm.send('error')
-        }
-        this.task?.reject(e)
-        throw e
-      } finally {
-        this.destroy()
+      if (this.fsm.matches(TaskStatus.Stopping)) {
+        this.fsm.send('stopped')
+      } else {
+        this.fsm.send('complete')
       }
-    })
+      this.task?.resolve()
+    } catch (e) {
+      if (this.fsm.matches(TaskStatus.Stopping)) {
+        this.fsm.send('stopped')
+      } else {
+        this.fsm.send('error')
+      }
+      this.task?.reject(e)
+      throw e
+    } finally {
+      this.destroy()
+    }
   }
 
   async stop(): Promise<void> {
-    this.fsm.send('stopBegin')
+    this.fsm.send('stop')
 
     await this.client!.abort()
     await this.task

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/BlackGlory/gado/compare/v0.2.5...v0.3.0) (2022-02-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* - requires Node.js `^12.20.0 || ^14.13.1 || >=16.0.0`
+- use delight-rpc 2.0 protocol
+
+### Features
+
+* add ESM support ([f627093](https://github.com/BlackGlory/gado/commit/f62709389fb19f5cdd51e9fb09497a8edb8a9480))
+* add IMetaModule.observeConcurrency ([218373a](https://github.com/BlackGlory/gado/commit/218373a1cf6881d817d9df051c851677d3c85618))
+
 ### [0.2.5](https://github.com/BlackGlory/gado/compare/v0.2.4...v0.2.5) (2022-02-13)
 
 ### [0.2.4](https://github.com/BlackGlory/gado/compare/v0.2.3...v0.2.4) (2021-12-22)

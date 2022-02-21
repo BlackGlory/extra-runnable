@@ -9,7 +9,7 @@ import createDebug from 'debug'
 import { calculateExponentialBackoffTimeout } from 'extra-timers'
 import ms from 'ms'
 import { FiniteStateMachine, IFiniteStateMachineSchema } from '@blackglory/structures'
-import { Destructor } from '@blackglory/destructor'
+import { Destructor } from 'extra-defer'
 import { FatalError } from './types.js'
 
 const debug = createDebug('daemon')

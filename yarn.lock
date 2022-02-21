@@ -476,14 +476,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@blackglory/destructor@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@blackglory/destructor/-/destructor-0.1.1.tgz#795c32410a97073ef4fbd71f9eb4bde30a91002f"
-  integrity sha512-jOUBoMpimv0YTFCEw4gAYdlvNSfCuXfU4Kh7bVRgmswh2eqSPPRyfzelDiJ09U59fvGZ7AKGSbevBqo05/TiYg==
-  dependencies:
-    "@blackglory/pass" "^0.1.0"
-    extra-promise "^0.21.2"
-
 "@blackglory/errors@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@blackglory/errors/-/errors-1.1.2.tgz#0577f01ca13850049efa0dd729e1a26e77e1dc3a"
@@ -2372,6 +2364,14 @@ extra-abort@^0.1.1:
     abort-controller "^3.0.0"
     iterable-operator "^0.14.5"
     justypes "^0.1.6"
+
+extra-defer@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/extra-defer/-/extra-defer-0.2.0.tgz#3c374aba64daeb0b39430a22e17dbe7de11fe006"
+  integrity sha512-+/j3rOxZG354psA5/NfMrt0X/qCJwaimAPGgfqE6QSBSbA3p4MVa3r4y3ozXEKnFAcQcbDthzgvjTR1ZWBEn4A==
+  dependencies:
+    "@blackglory/pass" "^0.1.0"
+    extra-promise "^0.21.2"
 
 extra-filesystem@^0.4.1:
   version "0.4.1"

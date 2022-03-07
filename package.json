@@ -75,7 +75,7 @@
     "delight-rpc": "^2.0.0",
     "extra-abort": "^0.1.1",
     "extra-defer": "^0.2.0",
-    "extra-filesystem": "^0.4.1",
+    "extra-filesystem": "^0.4.2",
     "extra-promise": "^0.21.2",
     "extra-timers": "^0.2.5",
     "hardware-concurrency": "^0.1.1",

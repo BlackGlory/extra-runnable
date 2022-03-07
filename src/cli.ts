@@ -12,10 +12,11 @@ import { AsyncTaskFactory, ThreadTaskFactory, ProcessTaskFactory } from './tasks
 import { nanoid } from 'nanoid'
 import path from 'path'
 import { fileURLToPath } from 'node:url'
-import { readJSONFileSync } from 'extra-filesystem'
+import { readJSONFileSync, findUpPackageFilenameSync } from 'extra-filesystem'
 import { importMetaModule } from '@utils/import-module.js'
 
-const pkgFilename = fileURLToPath(new URL('../package.json', import.meta.url))
+const pkgFilename = findUpPackageFilenameSync(fileURLToPath(new URL('.', import.meta.url)))
+assert(pkgFilename, 'The package.json is not found')
 const pkg = readJSONFileSync<{ name: string; version: string; description: string }>(pkgFilename)
 const debug = createDebug('cli')
 

@@ -1,7 +1,7 @@
 export function exitProcess(error?: Error): void {
   if (error) {
     try {
-      throw error
+      console.error(error)
     } finally {
       process.exit(1)
     }

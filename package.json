@@ -3,6 +3,8 @@
   "version": "0.3.4",
   "description": "",
   "keywords": [],
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "bin": {
     "gado": "src/cli.js"
   },

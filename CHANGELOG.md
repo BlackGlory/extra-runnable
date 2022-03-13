@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.5](https://github.com/BlackGlory/gado/compare/v0.3.4...v0.3.5) (2022-03-13)
+
+
+### Features
+
+* export IAPI ([8479bdd](https://github.com/BlackGlory/gado/commit/8479bdda49c858b6f9cd13f16f5aa8d199665c70))
+
 ### [0.3.4](https://github.com/BlackGlory/gado/compare/v0.3.3...v0.3.4) (2022-03-09)
 
 ### [0.3.3](https://github.com/BlackGlory/gado/compare/v0.3.2...v0.3.3) (2022-03-09)

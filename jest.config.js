@@ -12,6 +12,7 @@ export default {
     }
   }
 , testEnvironment: 'node'
+, testTimeout: 1000 * 30
 , resolver: '@blackglory/jest-node-exports-resolver'
 , testMatch: ['**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)']
 , moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {

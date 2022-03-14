@@ -11,13 +11,9 @@ import { Mode, ITaskFactory } from './types.js'
 import { AsyncTaskFactory, ThreadTaskFactory, ProcessTaskFactory } from './tasks/index.js'
 import { nanoid } from 'nanoid'
 import path from 'path'
-import { fileURLToPath } from 'node:url'
-import { readJSONFileSync, findUpPackageFilenameSync } from 'extra-filesystem'
 import { importMetaModule } from '@utils/import-module.js'
+import { name, version, description } from '@utils/package.js'
 
-const pkgFilename = findUpPackageFilenameSync(fileURLToPath(new URL('.', import.meta.url)))
-assert(pkgFilename, 'The package.json is not found')
-const pkg = readJSONFileSync<{ name: string; version: string; description: string }>(pkgFilename)
 const debug = createDebug('cli')
 
 interface IOptions {
@@ -31,9 +27,9 @@ interface IOptions {
 }
 
 program
-  .name(pkg.name)
-  .version(pkg.version)
-  .description(pkg.description)
+  .name(name)
+  .version(version)
+  .description(description)
   .requiredOption('--mode <mode>')
   .option('--id <id>')
   .option('--label <label>')

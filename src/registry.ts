@@ -5,13 +5,14 @@ import { delay } from 'extra-promise'
 import { calculateExponentialBackoffTimeout } from 'extra-timers'
 import WebSocket from 'ws'
 import ms from 'ms'
+import { version } from '@utils/package.js'
 
 export function registerInRegistry(daemon: Daemon, registry: string) {
   registerInRegistry()
 
   function registerInRegistry(retries: number = 0): void {
     const socket = new WebSocket(registry)
-    const close = createServer<IAPI>(daemon, socket)
+    const close = createServer<IAPI>(daemon, socket, {}, version)
     socket.once('close', async () => {
       close()
 

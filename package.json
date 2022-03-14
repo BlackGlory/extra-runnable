@@ -67,6 +67,7 @@
     "@blackglory/errors": "^2.2.0",
     "@blackglory/go": "^1.0.0",
     "@blackglory/pass": "^1.0.0",
+    "@blackglory/prelude": "^0.1.0",
     "@blackglory/structures": "^0.3.4",
     "@blackglory/types": "^1.0.0",
     "@blackglory/wait-for": "^0.4.4",

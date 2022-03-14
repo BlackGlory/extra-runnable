@@ -504,6 +504,13 @@
   resolved "https://registry.yarnpkg.com/@blackglory/jest-node-exports-resolver/-/jest-node-exports-resolver-0.1.0.tgz#feda8a73e0ea6ee4aec2a22a34afecf697d56f09"
   integrity sha512-rPT8Rw+FV4VAJBDedrEzZOq0/lpy+Tp+4oFTlhbkA6hIN/Uj//YL4gEsY5CNqZ9li+mOLLX0BcTeHI8tGmrV2g==
 
+"@blackglory/log@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@blackglory/log/-/log-1.0.0.tgz#eec748cc8590348a33b3d5fe3f605d5da205d366"
+  integrity sha512-2Gtv3vWvUatO9nwUO5acfKcGpRPGztQ39l8h5CatPaNO0Qj1s01/HZO1DAzW2o9RIEpFIIEH38Avy3G495Q22w==
+  dependencies:
+    "@blackglory/types" "^1.0.0"
+
 "@blackglory/observe@^0.1.5":
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@blackglory/observe/-/observe-0.1.5.tgz#dd180c112b84b58358dc068c9ae10ed4f3557201"
@@ -521,6 +528,20 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@blackglory/pass/-/pass-1.0.0.tgz#3b464433c0744c2dfa40ecbeaf6ab5fde1d13f83"
   integrity sha512-+R6qGmCrls+swn00S/BKbC8NNoIeG3eGOi4P6i8YOQGaBKNpu4GqufmclYqlGMKYNjl3rbye1k/OMy8eppSfjw==
+
+"@blackglory/prelude@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@blackglory/prelude/-/prelude-0.1.0.tgz#f567bf746cf38b38b757902480b4a4c145a5fbfa"
+  integrity sha512-BdjroUFM8hjEhZzo+bAlBdHB4tQskkejXh33H542p1Kiz/uoF7XPKBGluA+vnJnU3ULTjeARDIHPP47V01nYXg==
+  dependencies:
+    "@blackglory/errors" "^2.2.0"
+    "@blackglory/go" "^1.0.0"
+    "@blackglory/log" "^1.0.0"
+    "@blackglory/pass" "^1.0.0"
+    "@blackglory/types" "^1.0.0"
+    extra-lazy "^1.0.0"
+    iterable-operator "^1.0.0"
+    justypes "^2.0.0"
 
 "@blackglory/structures@^0.3.2":
   version "0.3.3"
@@ -2409,6 +2430,13 @@ extra-lazy@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/extra-lazy/-/extra-lazy-0.1.0.tgz#9fda740ffd3e07dd899fca526c4e4c0a04469982"
   integrity sha512-dE5jT6rKQSbRGiNTVfe/PQBi7d+cbHEZLyuUSC5c0nqOzngMb9QqptNxlHIQ6me+gWNVOH6fHzX1T+RGB9YsSA==
+  dependencies:
+    lodash.once "^4.1.1"
+
+extra-lazy@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/extra-lazy/-/extra-lazy-1.0.0.tgz#2df6e8f00810f4f5d59664166f7e48bebb0dcc9d"
+  integrity sha512-9+0dGJ9YOjDuTrv8Rtz/iqykni96mnBzaA1jraghRbvyjcPNXrgchqTBe/DZ0f/HPKQwf7rldItSn7zSDMp6FQ==
   dependencies:
     lodash.once "^4.1.1"
 

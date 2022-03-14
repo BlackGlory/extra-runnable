@@ -92,7 +92,7 @@ export interface IAPI {
     current: number
     target: number
   }
-  setConcurrency(val: number | string): void
+  setConcurrency(val: number | string): null
 
-  exit(): void
+  exit(): null
 }

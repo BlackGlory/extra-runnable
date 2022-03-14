@@ -129,7 +129,7 @@ function getConcurrency(): {
 
 *** setConcurrency
 #+BEGIN_SRC typescript
-function setConcurrency(val: number | string): void
+function setConcurrency(val: number | string): null
 #+END_SRC
 设置守护进程的目标并发数, 这会导致守护进程启动或关闭任务.
 将并发数设为0会关闭所有任务, 但不会导致守护进程退出.
@@ -146,7 +146,7 @@ function setConcurrency(val: number | string): void
 
 *** exit
 #+BEGIN_SRC typescript
-function exit(force: boolean = false): void
+function exit(force: boolean = false): null
 #+END_SRC
 
 关闭守护进程, 默认情况下会执行优雅退出.

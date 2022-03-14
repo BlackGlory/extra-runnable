@@ -129,7 +129,7 @@ export class Daemon implements IAPI {
     }
   }
   
-  setConcurrency(val: number | string): void {
+  setConcurrency(val: number | string): null {
     const target = isString(val) ? parseConcurrency(val) : val
     if (isntNull(target)) {
       this.targetConcurrency = target
@@ -140,9 +140,11 @@ export class Daemon implements IAPI {
       await this.scale()
       this.fsm.send('scaled')
     })
+
+    return null
   }
 
-  exit(): void {
+  exit(): null {
     this.fsm.send('exit')
 
     go(async () => {
@@ -156,6 +158,8 @@ export class Daemon implements IAPI {
         this._exitProcess()
       }
     })
+
+    return null
   }
 
   private error(err: Error): void {

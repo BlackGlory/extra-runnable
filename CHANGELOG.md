@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.8](https://github.com/BlackGlory/gado/compare/v0.3.7...v0.3.8) (2022-03-29)
+
+
+### Features
+
+* export IMetaModule, ITaskModule ([072ed1f](https://github.com/BlackGlory/gado/commit/072ed1f7a8475ae62916e1152a9e4ae968ccf8a5))
+
 ### [0.3.7](https://github.com/BlackGlory/gado/compare/v0.3.6...v0.3.7) (2022-03-14)
 
 

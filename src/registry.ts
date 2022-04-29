@@ -1,4 +1,4 @@
-import { createServer } from '@delight-rpc/websocket'
+import { createServer, Level } from '@delight-rpc/websocket'
 import { Daemon } from './daemon.js'
 import { IAPI } from '@src/types.js'
 import { delay } from 'extra-promise'
@@ -12,7 +12,10 @@ export function registerInRegistry(daemon: Daemon, registry: string) {
 
   function registerInRegistry(retries: number = 0): void {
     const socket = new WebSocket(registry)
-    const close = createServer<IAPI>(daemon, socket, {}, version)
+    const close = createServer<IAPI>(daemon, socket, {
+      loggerLevel: Level.None
+    , version
+    })
     socket.once('close', async () => {
       close()
 

@@ -1,4 +1,4 @@
-import { ITask, ITaskFactory, DaemonStatus, IMetaModule, Reason, IAPI, TaskStatus } from '@src/types.js'
+import { ITask, ITaskFactory, ITaskModule, DaemonStatus, Reason, IAPI, TaskStatus } from '@src/types.js'
 import { exitProcess } from '@utils/exit-process.js'
 import { parseConcurrency } from '@utils/parse-concurrency.js'
 import { isString, isntNull } from '@blackglory/types'
@@ -47,11 +47,11 @@ export class Daemon implements IAPI {
   private _exitProcess: (error?: Error) => void
   private destructor = new Destructor()
 
-  constructor({ id, label, taskFactory, metaModule, _exitProcess = exitProcess }: {
+  constructor({ id, label, taskFactory, taskModule, _exitProcess = exitProcess }: {
     id: string
   , label: string
+  , taskModule: ITaskModule<unknown>
   , taskFactory: ITaskFactory<unknown>
-  , metaModule: IMetaModule<unknown>
     // 专用于测试的注入口, 直到jest支持对mock ESM项目为止
   , _exitProcess?: (error?: Error) => void
   }) {
@@ -59,22 +59,22 @@ export class Daemon implements IAPI {
     this.label = label
     this.taskFactory = taskFactory
     this._exitProcess = _exitProcess
-    this.initMetaModule(metaModule)
+    this.initTaskModule(taskModule)
   }
 
-  private initMetaModule(metaModule: IMetaModule<unknown>): void {
-    this.initInit(metaModule)
-    this.initObserveConcurrency(metaModule)
-    this.initFinal(metaModule)
+  private initTaskModule(taskModule: ITaskModule<unknown>): void {
+    this.initInit(taskModule)
+    this.initObserveConcurrency(taskModule)
+    this.initFinal(taskModule)
   }
 
-  private initFinal(metaModule: IMetaModule<unknown>): void {
-    this.final = metaModule.final
+  private initFinal(taskModule: ITaskModule<unknown>): void {
+    this.final = taskModule.final
   }
 
-  private initObserveConcurrency(metaModule: IMetaModule<unknown>): void {
-    if (metaModule.observeConcurrency) {
-      const subscription = metaModule.observeConcurrency().subscribe({
+  private initObserveConcurrency(taskModule: ITaskModule<unknown>): void {
+    if (taskModule.observeConcurrency) {
+      const subscription = taskModule.observeConcurrency().subscribe({
         next: concurrency => {
           this.setConcurrency(concurrency)
         }
@@ -84,11 +84,11 @@ export class Daemon implements IAPI {
     }
   }
 
-  private initInit(metaModule: IMetaModule<unknown>): void {
-    if (metaModule.init) {
+  private initInit(taskModule: ITaskModule<unknown>): void {
+    if (taskModule.init) {
       let emitted = false
 
-      const subscription = metaModule.init().subscribe({
+      const subscription = taskModule.init().subscribe({
         next: params => {
           emitted = true
           this.params.resolve(params)

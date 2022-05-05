@@ -27,12 +27,24 @@ Gado有三种并发模式, 并发模式在启动时就已确定, 不能更改:
   该模式主要是为了弥补thread模式下Worker无法使用部分Native模块的不足.
   由于thread模式的资源开销更小, 请优先使用thread模式.
 
-** 模块
-*** 元模块
-元模块用于决定守护进程的一些高级行为, 元模块是可省略的.
-
+** 任务模块
 #+BEGIN_SRC typescript
-interface IMetaModule<T> {
+interface ITaskModule<T> {
+  /*
+   * default函数结束的定义:
+   * - default函数返回非PromiseLike值
+   * - default函数返回PromiseLike值, 且PromiseLike到达resolved或rejected状态.
+   * - default函数抛出错误.
+   *
+   * 当default函数结束与Gado的要求无关时(即在signal不处于aborted时结束),
+   * Gado会根据情况采取不同的重启方式:
+   * 如果default结束是因为函数返回, 则Gado会立即重启任务.
+   * 如果default结束是因为抛出错误, 则Gado会根据指数退避策略重启任务.
+   *
+   * @param {AbortSignal} signal 当Gado要求重启或结束任务时, 该参数会发出中止信号, 任务此时需要自行让default函数结束.
+   */
+  default(signal: AbortSignal, params: T): void | PromiseLike<void>
+
   /*
    * init返回一个Observable, 该Observable会被订阅, 发出的值会用作任务的params.
    *
@@ -54,28 +66,6 @@ interface IMetaModule<T> {
    */
   final?: (reason: 'exit') => void | PromiseLike<void>
   final?: (reason: 'error', error: Error) => void | PromiseLike<void>
-}
-#+END_SRC
-
-*** 任务模块
-任务模块是守护进程的基本单元, 它在Gado的管理下并发运行, 任务模块不可省略.
-
-#+BEGIN_SRC typescript
-interface ITaskModule<T> {
-  /*
-   * default函数结束的定义:
-   * - default函数返回非PromiseLike值
-   * - default函数返回PromiseLike值, 且PromiseLike到达resolved或rejected状态.
-   * - default函数抛出错误.
-   *
-   * 当default函数结束与Gado的要求无关时(即在signal不处于aborted时结束),
-   * Gado会根据情况采取不同的重启方式:
-   * 如果default结束是因为函数返回, 则Gado会立即重启任务.
-   * 如果default结束是因为抛出错误, 则Gado会根据指数退避策略重启任务.
-   *
-   * @param {AbortSignal} signal 当Gado要求重启或结束任务时, 该参数会发出中止信号, 任务此时需要自行让default函数结束.
-   */
-  default(signal: AbortSignal, params: T): void | PromiseLike<void>
 }
 #+END_SRC
 

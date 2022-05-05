@@ -1,7 +1,7 @@
 import { ThreadTaskFactory } from '@src/tasks/thread/index.js'
 import { Daemon } from '@src/daemon.js'
 import { getFixturePath } from '@test/utils.js'
-import { DaemonStatus, IMetaModule, Reason } from '@src/types'
+import { DaemonStatus, ITaskModule, Reason } from '@src/types'
 import { waitForFunction, waitForTimeout } from '@blackglory/wait-for'
 import { Observable } from 'rxjs'
 import { delay } from 'extra-promise'
@@ -21,8 +21,9 @@ describe('Daemon', () => {
   describe('init', () => {
     test('emit first value', async () => {
       const daemon = createDaemon({
-        metaModule: {
-          init() {
+        taskModule: {
+          default() {}
+        , init() {
             return new Observable(observer => {
               go(async () => {
                 await delay(100)
@@ -40,8 +41,9 @@ describe('Daemon', () => {
 
     test('emit non-first value', async () => {
       const daemon = createDaemon({
-        metaModule: {
-          init() {
+        taskModule: {
+          default() {}
+        , init() {
             return new Observable(observer => {
               go(async () => {
                 await delay(100)
@@ -63,8 +65,9 @@ describe('Daemon', () => {
       test('before first value', async () => {
         const final = jest.fn<any, any>()
         const daemon = createDaemon({
-          metaModule: {
-            init() {
+          taskModule: {
+            default() {}
+          , init() {
               return new Observable(observer => {
                 go(async () => {
                   await delay(100)
@@ -85,8 +88,9 @@ describe('Daemon', () => {
 
       test('after first value', async () => {
         const daemon = createDaemon({
-          metaModule: {
-            init() {
+          taskModule: {
+            default() {}
+          , init() {
               return new Observable(observer => {
                 go(async () => {
                   await delay(100)
@@ -110,8 +114,9 @@ describe('Daemon', () => {
         const error = new Error('custom error')
         const final = jest.fn<any, any>()
         const daemon = createDaemon({
-          metaModule: {
-            init() {
+          taskModule: {
+            default() {}
+          , init() {
               return new Observable(observer => {
                 go(async () => {
                   await delay(100)
@@ -203,7 +208,10 @@ describe('Daemon', () => {
   test('exit()', async () => {
     const final = jest.fn<any, any>()
     const daemon = createDaemon({
-      metaModule: { final }
+      taskModule: {
+        default() {}
+      , final
+      }
     })
 
     daemon.exit()
@@ -224,7 +232,7 @@ describe('Daemon', () => {
 })
 
 function createDaemon(params?: {
-  metaModule?: IMetaModule<unknown>
+  taskModule?: ITaskModule<unknown>
   taskFilename?: string
 }) {
   const taskFilename = params?.taskFilename ?? getFixturePath('esm/stopable.js')
@@ -233,7 +241,9 @@ function createDaemon(params?: {
     id: 'test-id'
   , label: 'test-label'
   , taskFactory: new ThreadTaskFactory(taskFilename)
-  , metaModule: params?.metaModule ?? {}
+  , taskModule: params?.taskModule ?? {
+      default() {}
+    }
   , _exitProcess: exitProcess
   })
 }

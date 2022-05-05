@@ -43,14 +43,12 @@ export enum Reason {
 , Error = 'error'
 }
 
-export interface IMetaModule<T> {
+export interface ITaskModule<T> {
+  default(signal: AbortSignal, params?: T): void | PromiseLike<void>
+
   init?: () => Observable<T>
   observeConcurrency?: () => Observable<number>
   final?: (reason: Reason, error?: Error) => void | PromiseLike<void>
-}
-
-export interface ITaskModule<T> {
-  default(signal: AbortSignal, params?: T): void | PromiseLike<void>
 }
 
 export interface ITask<T> {

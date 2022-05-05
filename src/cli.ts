@@ -11,8 +11,8 @@ import { Mode, ITaskFactory } from './types.js'
 import { AsyncTaskFactory, ThreadTaskFactory, ProcessTaskFactory } from './tasks/index.js'
 import { nanoid } from 'nanoid'
 import path from 'path'
-import { importMetaModule } from '@utils/import-module.js'
 import { name, version, description } from '@utils/package.js'
+import { importTaskModule } from '@utils/import-module.js'
 
 const debug = createDebug('cli')
 
@@ -23,7 +23,6 @@ interface IOptions {
   label?: string
   port?: string
   registry?: string
-  meta?: string
 }
 
 program
@@ -36,7 +35,6 @@ program
   .option('--concurrency <concurrency>', '', '1')
   .option('--port <port>', 'port')
   .option('--registry <url>')
-  .option('--meta <filename>')
   .argument('<filename>')
   .action(async (filename: string) => {
     const taskFilename = path.resolve(process.cwd(), filename)
@@ -50,13 +48,12 @@ program
     const port: number | null = getPort(options)
     debug('port: %d', port)
     const registry: string | null = getRegistry(options)
-    const metaFilename: string | null = getMeta(options)
 
     const daemon = new Daemon({
       id
     , label
     , taskFactory: getTaskFactory(mode, taskFilename)
-    , metaModule: metaFilename ? await importMetaModule(metaFilename) : {}
+    , taskModule: await importTaskModule(taskFilename)
     })
     daemon.setConcurrency(concurrency)
 
@@ -110,10 +107,6 @@ function getPort(options: IOptions): number | null{
   assert(port >= 0, 'The parameter port must greater than or equal to zero')
 
   return port
-}
-
-function getMeta(options: IOptions): string | null {
-  return options.meta ?? null
 }
 
 function getRegistry(options: IOptions): string | null {

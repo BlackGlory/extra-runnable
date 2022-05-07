@@ -47,7 +47,6 @@ export interface ITaskModule<T> {
   default(signal: AbortSignal, params?: T): void | PromiseLike<void>
 
   init?: () => Observable<T>
-  observeConcurrency?: () => Observable<number>
   final?: (reason: Reason, error?: Error) => void | PromiseLike<void>
 }
 

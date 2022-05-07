@@ -64,24 +64,11 @@ export class Daemon implements IAPI {
 
   private initTaskModule(taskModule: ITaskModule<unknown>): void {
     this.initInit(taskModule)
-    this.initObserveConcurrency(taskModule)
     this.initFinal(taskModule)
   }
 
   private initFinal(taskModule: ITaskModule<unknown>): void {
     this.final = taskModule.final
-  }
-
-  private initObserveConcurrency(taskModule: ITaskModule<unknown>): void {
-    if (taskModule.observeConcurrency) {
-      const subscription = taskModule.observeConcurrency().subscribe({
-        next: concurrency => {
-          this.setConcurrency(concurrency)
-        }
-      , error: err => this.error(err)
-      })
-      this.destructor.defer(() => subscription.unsubscribe())
-    }
   }
 
   private initInit(taskModule: ITaskModule<unknown>): void {

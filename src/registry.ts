@@ -7,10 +7,10 @@ import WebSocket from 'ws'
 import ms from 'ms'
 import { version } from '@utils/package.js'
 
-export function registerInRegistry(daemon: Daemon, registry: string) {
-  registerInRegistry()
+export function registerInRegistry(daemon: Daemon, registry: string): void {
+  register()
 
-  function registerInRegistry(retries: number = 0): void {
+  function register(retries: number = 0): void {
     const socket = new WebSocket(registry)
     const close = createServer<IAPI>(daemon, socket, {
       loggerLevel: Level.None
@@ -25,7 +25,7 @@ export function registerInRegistry(daemon: Daemon, registry: string) {
       , retries
       })
       await delay(timeout)
-      registerInRegistry(retries + 1)
+      register(retries + 1)
     })
   }
 }

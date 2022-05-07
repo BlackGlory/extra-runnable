@@ -56,11 +56,6 @@ interface ITaskModule<T> {
   init?: () => Observable<T>
 
   /*
-   * observeConcurrency返回一个Observable, 该Observable会被订阅, 发出的值会用作Daemon的concurrency.
-   */
-  observeConcurrency?: () => Observable<number>
-  
-  /*
    * 这是一个钩子, 当守护进程退出时, 会调用它执行清理工作.
    * 只要守护进程启动, 无论任何情况下的退出, 都会导致final被调用.
    */

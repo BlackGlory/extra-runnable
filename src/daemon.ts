@@ -62,37 +62,6 @@ export class Daemon implements IAPI {
     this.initTaskModule(taskModule)
   }
 
-  private initTaskModule(taskModule: ITaskModule<unknown>): void {
-    this.initInit(taskModule)
-    this.initFinal(taskModule)
-  }
-
-  private initFinal(taskModule: ITaskModule<unknown>): void {
-    this.final = taskModule.final
-  }
-
-  private initInit(taskModule: ITaskModule<unknown>): void {
-    if (taskModule.init) {
-      let emitted = false
-
-      const subscription = taskModule.init().subscribe({
-        next: params => {
-          emitted = true
-          this.params.resolve(params)
-        }
-      , complete: () => {
-          if (!emitted) {
-            this.error(new FatalError('The observable complete before any value is emitted'))
-          }
-        }
-      , error: err => this.error(err)
-      })
-      this.destructor.defer(() => subscription.unsubscribe())
-    } else {
-      this.params.resolve(undefined)
-    }
-  }
-
   ping() {
     return 'pong' as const
   }
@@ -226,6 +195,38 @@ export class Daemon implements IAPI {
     if (task) {
       await task.stop()
       this.tasks.delete(task)
+    }
+  }
+
+  private initTaskModule(taskModule: ITaskModule<unknown>): void {
+    const self = this
+    initInit(taskModule)
+    initFinal(taskModule)
+
+    function initFinal(taskModule: ITaskModule<unknown>): void {
+      self.final = taskModule.final
+    }
+
+    function initInit(taskModule: ITaskModule<unknown>): void {
+      if (taskModule.init) {
+        let emitted = false
+
+        const subscription = taskModule.init().subscribe({
+          next: params => {
+            emitted = true
+            self.params.resolve(params)
+          }
+        , complete: () => {
+            if (!emitted) {
+              self.error(new FatalError('The observable complete before any value is emitted'))
+            }
+          }
+        , error: err => self.error(err)
+        })
+        self.destructor.defer(() => subscription.unsubscribe())
+      } else {
+        self.params.resolve(undefined)
+      }
     }
   }
 }

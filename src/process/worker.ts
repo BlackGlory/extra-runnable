@@ -3,12 +3,12 @@ import { IAPI } from './types.js'
 import { WorkerState, workerSchema } from '@fsm/worker.js'
 import { FiniteStateMachine } from '@blackglory/structures'
 import { AbortController } from 'extra-abort'
-import { importTaskModule } from '@utils/import-module.js'
-import { IModule } from '@src/types.js'
+import { importTaskFunction } from '@utils/import-task-function.js'
+import { TaskFunction } from '@src/types.js'
 
 const fsm = new FiniteStateMachine(workerSchema, WorkerState.Idle)
 let controller: AbortController
-let module: IModule<unknown, unknown>
+let mainFunction: TaskFunction<unknown, unknown>
 
 createServer<IAPI<unknown, unknown>>(
   {
@@ -22,7 +22,7 @@ createServer<IAPI<unknown, unknown>>(
 process.send!('ready')
 
 async function init(filename: string): Promise<void> {
-  module = await importTaskModule(filename)
+  mainFunction = await importTaskFunction(filename)
 }
 
 async function run(params: unknown): Promise<unknown> {
@@ -32,7 +32,7 @@ async function run(params: unknown): Promise<unknown> {
   if (controller.signal.aborted) return fsm.send('end')
   fsm.send('started')
   try {
-    return await module.default(controller.signal, params)
+    return await mainFunction(controller.signal, params)
   } finally {
     fsm.send('end')
   }

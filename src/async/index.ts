@@ -1,16 +1,16 @@
-import { ITask, IModule } from '@src/types.js'
+import { ITask, TaskFunction } from '@src/types.js'
 import { Deferred } from 'extra-promise'
 import { pass, assert, isntUndefined } from '@blackglory/prelude'
 import { FiniteStateMachine } from '@blackglory/structures'
 import { taskSchema, TaskState } from '@fsm/task.js'
 import { AbortController } from 'extra-abort'
-import { importTaskModule } from '@utils/import-module.js'
+import { importTaskFunction } from '@utils/import-task-function.js'
 
 export class AsyncTask<Result, Params> implements ITask<Result, Params> {
   private controller?: AbortController
   private task?: Deferred<void>
   private fsm = new FiniteStateMachine(taskSchema, TaskState.Created)
-  private module?: IModule<Result, Params>
+  private mainFunction?: TaskFunction<Result, Params>
 
   constructor(private filename: string) {}
 
@@ -21,7 +21,7 @@ export class AsyncTask<Result, Params> implements ITask<Result, Params> {
   async init(): Promise<void> {
     this.fsm.send('init')
     try {
-      this.module = await importTaskModule<Result, Params>(this.filename)
+      this.mainFunction = await importTaskFunction<Result, Params>(this.filename)
       this.fsm.send('inited')
     } catch (e) {
       this.fsm.send('error')
@@ -39,8 +39,8 @@ export class AsyncTask<Result, Params> implements ITask<Result, Params> {
     Promise.resolve(this.task).catch(pass)
 
     try {
-      assert(isntUndefined(this.module), 'module is undefined')
-      const promise = this.module.default(controller.signal, params)
+      assert(isntUndefined(this.mainFunction), 'module is undefined')
+      const promise = this.mainFunction(controller.signal, params)
       this.fsm.send('started')
       const result = await promise
 

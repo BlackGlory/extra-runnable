@@ -5,15 +5,15 @@ import { WorkerState, workerSchema } from '@fsm/worker.js'
 import { FiniteStateMachine } from '@blackglory/structures'
 import { assert } from '@blackglory/errors'
 import { AbortController } from 'extra-abort'
-import { importTaskModule } from '@utils/import-module.js'
-import { IModule } from '@src/types'
+import { importTaskFunction } from '@utils/import-task-function.js'
+import { TaskFunction } from '@src/types'
 
 assert(!isMainThread, 'This worker should not be run on main thread')
 assert(parentPort, 'This worker should be run on worker thread')
 
 const fsm = new FiniteStateMachine(workerSchema, WorkerState.Idle)
 let controller: AbortController
-let module: IModule<unknown, unknown>
+let mainFunction: TaskFunction<unknown, unknown>
 
 createServer<IAPI<unknown, unknown>>(
   {
@@ -26,7 +26,7 @@ createServer<IAPI<unknown, unknown>>(
 )
 
 async function init(filename: string): Promise<void> {
-  module = await importTaskModule(filename)
+  mainFunction = await importTaskFunction(filename)
 }
 
 async function run(params: unknown): Promise<unknown> {
@@ -37,7 +37,7 @@ async function run(params: unknown): Promise<unknown> {
   if (controller.signal.aborted) return fsm.send('end')
   fsm.send('started')
   try {
-    return await module.default(controller.signal, params)
+    return await mainFunction(controller.signal, params)
   } finally {
     fsm.send('end')
   }

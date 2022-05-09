@@ -3,9 +3,8 @@ import { Awaitable } from '@blackglory/prelude'
 
 export { TaskState } from '@fsm/task.js'
 
-export interface IModule<Result, Params> {
-  default(signal: AbortSignal, params?: Params): Awaitable<Result>
-}
+export type TaskFunction<Result, Params> = (signal: AbortSignal, params?: Params) =>
+  Awaitable<Result>
 
 export interface ITask<Result, Params> {
   getStatus(): TaskState

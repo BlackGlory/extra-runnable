@@ -1,9 +1,9 @@
-import { IModule } from '@src/types.js'
+import { TaskFunction } from '@src/types.js'
 import { isFunction, isObject, isUndefined } from '@blackglory/prelude'
 
-export async function importTaskModule<Result, Params>(
+export async function importTaskFunction<Result, Params>(
   filename: string
-): Promise<IModule<Result, Params>> {
+): Promise<TaskFunction<Result, Params>> {
   const module = await import(filename)
 
   // module.exports = function () {}
@@ -12,10 +12,7 @@ export async function importTaskModule<Result, Params>(
     (isFunction(module.final) || isUndefined(module.final)) &&
     isFunction(module)
   ) {
-    return {
-      ...module
-    , default: module
-    }
+    return module
   }
 
   // export default function() {}
@@ -24,10 +21,7 @@ export async function importTaskModule<Result, Params>(
     (isFunction(module.final) || isUndefined(module.final)) &&
     isObject(module) && isFunction(module.default)
   ) {
-    return {
-      ...module
-    , default: module.default
-    }
+    return module.default
   }
 
   // exports.default = function() {}
@@ -36,10 +30,7 @@ export async function importTaskModule<Result, Params>(
     (isFunction(module.default.final) || isUndefined(module.default.final)) &&
     isObject(module) && isObject(module.default) && isFunction(module.default.default)
   ) {
-    return {
-      ...module.default
-    , default: module.default.default
-    }
+    return module.default.default
   }
 
   throw new Error('Invalid task module')

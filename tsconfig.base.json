@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2018"
+  , "module": "ES2020"
+  , "moduleResolution": "Node"
+  , "strict": true
+  , "esModuleInterop": true
+  , "newLine": "lf"
+  , "plugins": [
+      { "transform": "typescript-transform-paths" }
+    , { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ]
+  , "baseUrl": "."
+  , "paths": {
+      "@src/*": ["src/*"]
+    , "@fsm/*": ["src/fsm/*"]
+    , "@utils/*": ["src/utils/*"]
+    , "@test/*": ["__tests__/*"]
+    }
+  }
+}

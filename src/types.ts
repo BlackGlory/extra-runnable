@@ -8,6 +8,7 @@ export type TaskFunction<Result, Params> = (signal: AbortSignal, params?: Params
 
 export interface ITask<Result, Params> {
   getStatus(): TaskState
+
   init(): Promise<void>
   run(params: Params): Promise<Result>
   abort(): Promise<void>

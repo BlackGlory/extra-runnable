@@ -587,14 +587,13 @@
     iterable-operator "^1.0.0"
     rxjs "^7.5.5"
 
-"@blackglory/structures@^0.3.6":
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/@blackglory/structures/-/structures-0.3.7.tgz#65979457438409819f6f0c3f31ccda8bde225ed6"
-  integrity sha512-CCixmJ5XvFYwk7SgMu7kbIYBzywmCW/SqZnqYuMip3ISrWZ7+DI7ahjZjgOs/M7xe6MFj3NJoKkzAdoXy2LANg==
+"@blackglory/structures@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@blackglory/structures/-/structures-0.4.0.tgz#76c73ed275fbc64a45a3779637c9b6a0ae64ad3d"
+  integrity sha512-qlo0jtSzkrQXfLh7TTjOyFVMBmA4eiyLWZJJ6E5TTCSb9qI00PxjXP8uRLn1tYPTrYFnE/qbk9VG/qeP3iMy5w==
   dependencies:
     "@blackglory/errors" "^2.2.1"
     "@blackglory/types" "^1.1.0"
-    extra-promise "^1.0.2"
     extra-timers "^0.2.5"
     iterable-operator "^1.1.0"
     justypes "^2.0.0"

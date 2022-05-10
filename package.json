@@ -62,7 +62,7 @@
   "dependencies": {
     "@blackglory/errors": "^2.2.1",
     "@blackglory/prelude": "^0.1.1",
-    "@blackglory/structures": "^0.3.6",
+    "@blackglory/structures": "^0.4.0",
     "@blackglory/wait-for": "^0.4.4",
     "@delight-rpc/child-process": "^0.4.1",
     "@delight-rpc/worker-threads": "^4.0.0",

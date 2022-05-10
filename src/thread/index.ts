@@ -11,10 +11,10 @@ import { fileURLToPath } from 'node:url'
 
 const workerFilename = fileURLToPath(new URL('./worker.js', import.meta.url))
 
-export class ThreadTask<Result, Params> implements ITask<Result, Params> {
+export class ThreadTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
   private task?: Deferred<void>
   private worker?: Worker
-  private client?: ClientProxy<IAPI<Result, Params>>
+  private client?: ClientProxy<IAPI<Result, Args>>
   private cancelClient?: () => void
   private fsm = new FiniteStateMachine(taskSchema, TaskState.Created)
 
@@ -28,7 +28,7 @@ export class ThreadTask<Result, Params> implements ITask<Result, Params> {
     this.fsm.send('init')
     try {
       this.worker = new Worker(workerFilename)
-      ;[this.client, this.cancelClient] = createClient<IAPI<Result, Params>>(this.worker)
+      ;[this.client, this.cancelClient] = createClient<IAPI<Result, Args>>(this.worker)
       await this.client.init(this.filename)
       this.fsm.send('inited')
     } catch (e) {
@@ -37,7 +37,7 @@ export class ThreadTask<Result, Params> implements ITask<Result, Params> {
     }
   }
 
-  async run(params: Params): Promise<Result> {
+  async run(...args: Args): Promise<Result> {
     this.fsm.send('start')
     assert(this.client, 'client is undefined')
 
@@ -45,7 +45,7 @@ export class ThreadTask<Result, Params> implements ITask<Result, Params> {
     Promise.resolve(this.task).catch(pass)
 
     try {
-      const promise = this.client.run(params)
+      const promise = this.client.run(...args)
       this.fsm.send('started')
       const result = await promise
 

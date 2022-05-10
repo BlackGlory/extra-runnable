@@ -1,9 +1,9 @@
 import { TaskFunction } from '@src/types.js'
 import { isFunction, isObject } from '@blackglory/prelude'
 
-export async function importTaskFunction<Result, Params>(
+export async function importTaskFunction<Result, Args extends unknown[]>(
   filename: string
-): Promise<TaskFunction<Result, Params>> {
+): Promise<TaskFunction<Result, Args>> {
   const module = await import(filename)
 
   // module.exports = function () {}

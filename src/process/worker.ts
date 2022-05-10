@@ -8,9 +8,9 @@ import { TaskFunction } from '@src/types.js'
 
 const fsm = new FiniteStateMachine(workerSchema, WorkerState.Idle)
 let controller: AbortController
-let mainFunction: TaskFunction<unknown, unknown>
+let mainFunction: TaskFunction<unknown, unknown[]>
 
-createServer<IAPI<unknown, unknown>>(
+createServer<IAPI<unknown, unknown[]>>(
   {
     init
   , run
@@ -25,14 +25,14 @@ async function init(filename: string): Promise<void> {
   mainFunction = await importTaskFunction(filename)
 }
 
-async function run(params: unknown): Promise<unknown> {
+async function run(...args: unknown[]): Promise<unknown> {
   controller = new AbortController()
 
   fsm.send('start')
   if (controller.signal.aborted) return fsm.send('end')
   fsm.send('started')
   try {
-    return await mainFunction(controller.signal, params)
+    return await mainFunction(controller.signal, ...args)
   } finally {
     fsm.send('end')
   }

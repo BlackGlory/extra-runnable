@@ -12,10 +12,10 @@ import { fileURLToPath } from 'node:url'
 
 const workerFilename = fileURLToPath(new URL('./worker.js', import.meta.url))
 
-export class ProcessTask<Result, Params> implements ITask<Result, Params> {
+export class ProcessTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
   private task?: Deferred<void>
   private childProcess?: ChildProcess
-  private client?: ClientProxy<IAPI<Result, Params>>
+  private client?: ClientProxy<IAPI<Result, Args>>
   private cancelClient?: () => void
   private fsm = new FiniteStateMachine(taskSchema, TaskState.Created)
 
@@ -35,7 +35,7 @@ export class ProcessTask<Result, Params> implements ITask<Result, Params> {
       // - https://github.com/nodejs/node/issues/34785
       // - https://github.com/nodejs/node/pull/41221
       await waitForEventEmitter(this.childProcess, 'message')
-      ;[this.client, this.cancelClient] = createClient<IAPI<Result, Params>>(this.childProcess)
+      ;[this.client, this.cancelClient] = createClient<IAPI<Result, Args>>(this.childProcess)
       await this.client.init(this.filename)
       this.fsm.send('inited')
     } catch (e) {
@@ -44,7 +44,7 @@ export class ProcessTask<Result, Params> implements ITask<Result, Params> {
     }
   }
 
-  async run(params: Params): Promise<Result> {
+  async run(...args: Args): Promise<Result> {
     this.fsm.send('start')
     assert(this.client, 'client is undefined')
 
@@ -52,7 +52,7 @@ export class ProcessTask<Result, Params> implements ITask<Result, Params> {
     Promise.resolve(this.task).catch(pass)
 
     try {
-      const promise = this.client.run(params)
+      const promise = this.client.run(...args)
       this.fsm.send('started')
       const result = await promise
 

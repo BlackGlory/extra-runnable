@@ -6,11 +6,11 @@ import { taskSchema, TaskState } from '@fsm/task.js'
 import { AbortController } from 'extra-abort'
 import { importTaskFunction } from '@utils/import-task-function.js'
 
-export class AsyncTask<Result, Params> implements ITask<Result, Params> {
+export class AsyncTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
   private controller?: AbortController
   private task?: Deferred<void>
   private fsm = new FiniteStateMachine(taskSchema, TaskState.Created)
-  private mainFunction?: TaskFunction<Result, Params>
+  private mainFunction?: TaskFunction<Result, Args>
 
   constructor(private filename: string) {}
 
@@ -21,7 +21,7 @@ export class AsyncTask<Result, Params> implements ITask<Result, Params> {
   async init(): Promise<void> {
     this.fsm.send('init')
     try {
-      this.mainFunction = await importTaskFunction<Result, Params>(this.filename)
+      this.mainFunction = await importTaskFunction<Result, Args>(this.filename)
       this.fsm.send('inited')
     } catch (e) {
       this.fsm.send('error')
@@ -29,7 +29,7 @@ export class AsyncTask<Result, Params> implements ITask<Result, Params> {
     }
   }
 
-  async run(params: Params): Promise<Result> {
+  async run(...args: Args): Promise<Result> {
     this.fsm.send('start')
 
     const controller = new AbortController()
@@ -40,7 +40,7 @@ export class AsyncTask<Result, Params> implements ITask<Result, Params> {
 
     try {
       assert(isntUndefined(this.mainFunction), 'module is undefined')
-      const promise = this.mainFunction(controller.signal, params)
+      const promise = this.mainFunction(controller.signal, ...args)
       this.fsm.send('started')
       const result = await promise
 

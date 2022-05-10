@@ -8,15 +8,15 @@ yarn add boso
 
 ## API
 ```ts
-// export default function (signal: AbortSignal, params?: Params) {...}
-type TaskFunction<Result, Params> = (signal: AbortSignal, params?: Params) =>
-  Awaitable<Result>
+// export default function (signal: AbortSignal, ...args: Args) {...}
+type TaskFunction<Result, Args extends unknown[]> =
+  (signal: AbortSignal, ...args: Args) => Awaitable<Result>
 
-interface ITask<Result, Params> {
+interface ITask<Result, Args extends unknown[]> {
   getStatus(): TaskState
 
   init(): Promise<void>
-  run(params: Params): Promise<Result>
+  run(...args: Args): Promise<Result>
   abort(): Promise<void>
   destroy(): void
 }
@@ -37,21 +37,21 @@ enum TaskState {
 
 ### AsyncTask
 ```ts
-class AsyncTask<Result, Params> implements ITask<Result, Params> {
+class AsyncTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
   constructor(filename: string)
 }
 ```
 
 ### ProcessTask
 ```ts
-class ProcessTask<Result, Params> implements ITask<Result, Params> {
+class ProcessTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
   constructor(filename: string)
 }
 ```
 
 ### ThreadTask
 ```ts
-class ThreadTask<Result, Params> implements ITask<Result, Params> {
+class ThreadTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
   constructor(filename: string)
 }
 ```

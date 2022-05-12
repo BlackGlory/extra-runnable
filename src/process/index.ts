@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url'
 
 const workerFilename = fileURLToPath(new URL('./worker.js', import.meta.url))
 
-export class ProcessTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
+export class ProcessTaskFromModule<Result, Args extends unknown[]> implements ITask<Result, Args> {
   private task?: Deferred<void>
   private childProcess?: ChildProcess
   private client?: ClientProxy<IAPI<Result, Args>>

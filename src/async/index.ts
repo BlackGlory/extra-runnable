@@ -6,28 +6,17 @@ import { taskSchema, TaskState } from '@fsm/task.js'
 import { AbortController } from 'extra-abort'
 import { importTaskFunction } from '@utils/import-task-function.js'
 
-export class AsyncTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
-  private controller?: AbortController
-  private task?: Deferred<void>
-  private fsm = new FiniteStateMachine(taskSchema, TaskState.Created)
-  private mainFunction?: TaskFunction<Result, Args>
-
-  constructor(private filename: string) {}
+abstract class AsyncTask<Result, Args extends unknown[]> implements ITask<Result, Args> {
+  protected controller?: AbortController
+  protected task?: Deferred<void>
+  protected fsm = new FiniteStateMachine(taskSchema, TaskState.Created)
+  protected taskFunction?: TaskFunction<Result, Args>
 
   getStatus(): TaskState {
     return this.fsm.state
   }
 
-  async init(): Promise<void> {
-    this.fsm.send('init')
-    try {
-      this.mainFunction = await importTaskFunction<Result, Args>(this.filename)
-      this.fsm.send('inited')
-    } catch (e) {
-      this.fsm.send('error')
-      throw e
-    }
-  }
+  abstract init(): Promise<void>
 
   async run(...args: Args): Promise<Result> {
     this.fsm.send('start')
@@ -39,8 +28,8 @@ export class AsyncTask<Result, Args extends unknown[]> implements ITask<Result, 
     Promise.resolve(this.task).catch(pass)
 
     try {
-      assert(isntUndefined(this.mainFunction), 'module is undefined')
-      const promise = this.mainFunction(controller.signal, ...args)
+      assert(isntUndefined(this.taskFunction), 'module is undefined')
+      const promise = this.taskFunction(controller.signal, ...args)
       this.fsm.send('started')
       const result = await promise
 
@@ -75,5 +64,39 @@ export class AsyncTask<Result, Args extends unknown[]> implements ITask<Result, 
 
     delete this.controller
     delete this.task
+  }
+}
+
+export class AsyncTaskFromModule<Result, Args extends unknown[]> extends AsyncTask<Result, Args> {
+  constructor(private filename: string) {
+    super()
+  }
+
+  async init(): Promise<void> {
+    this.fsm.send('init')
+    try {
+      this.taskFunction = await importTaskFunction<Result, Args>(this.filename)
+      this.fsm.send('inited')
+    } catch (e) {
+      this.fsm.send('error')
+      throw e
+    }
+  }
+}
+
+export class AsyncTaskFromFunction<Result, Args extends unknown[]> extends AsyncTask<Result, Args> {
+  constructor(taskFunction: TaskFunction<Result, Args>) {
+    super()
+    this.taskFunction = taskFunction
+  }
+
+  async init(): Promise<void> {
+    this.fsm.send('init')
+    try {
+      this.fsm.send('inited')
+    } catch (e) {
+      this.fsm.send('error')
+      throw e
+    }
   }
 }

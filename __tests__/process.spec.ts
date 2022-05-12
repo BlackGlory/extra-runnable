@@ -1,4 +1,4 @@
-import { ProcessTask } from '@src/process/index.js'
+import { ProcessTaskFromModule } from '@src/process/index.js'
 import { TaskState } from '@fsm/task.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
@@ -9,7 +9,7 @@ describe('ProcessTask', () => {
   describe('init', () => {
     describe('module does not exist', () => {
       it('throws Error', async () => {
-        const task = new ProcessTask(getFixturePath('not-exist.js'))
+        const task = new ProcessTaskFromModule(getFixturePath('not-exist.js'))
 
         try {
           const err = await getErrorPromise(task.init())
@@ -26,7 +26,7 @@ describe('ProcessTask', () => {
     , 'esm/bad.js'
     ])('bad module (%s)', filename => {
       it('throws Error', async () => {
-        const task = new ProcessTask(getFixturePath(filename))
+        const task = new ProcessTaskFromModule(getFixturePath(filename))
 
         try {
           const err = await getErrorPromise(task.init())
@@ -42,7 +42,7 @@ describe('ProcessTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('created (%s)', filename => {
-      const task = new ProcessTask(getFixturePath(filename))
+      const task = new ProcessTaskFromModule(getFixturePath(filename))
 
       expect(task.getStatus()).toBe(TaskState.Created)
     })
@@ -51,7 +51,7 @@ describe('ProcessTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('ready (%s)', async filename => {
-      const task = new ProcessTask(getFixturePath(filename))
+      const task = new ProcessTaskFromModule(getFixturePath(filename))
 
       try {
         await task.init()
@@ -68,7 +68,7 @@ describe('ProcessTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('running (%s)', async filename => {
-      const task = new ProcessTask(getFixturePath(filename))
+      const task = new ProcessTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {
@@ -86,7 +86,7 @@ describe('ProcessTask', () => {
       'commonjs/completed.cjs'
     , 'esm/completed.js'
     ])('completed (%s)', async filename => {
-      const task = new ProcessTask(getFixturePath(filename))
+      const task = new ProcessTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {
@@ -103,7 +103,7 @@ describe('ProcessTask', () => {
       'commonjs/error.cjs'
     , 'esm/error.js'
     ])('error (%s)', async filename => {
-      const task = new ProcessTask(getFixturePath(filename))
+      const task = new ProcessTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {
@@ -122,7 +122,7 @@ describe('ProcessTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('stopping (%s)', async filename => {
-      const task = new ProcessTask(getFixturePath(filename))
+      const task = new ProcessTaskFromModule(getFixturePath(filename))
       await task.init()
 
       task.run(undefined).catch(pass)
@@ -136,7 +136,7 @@ describe('ProcessTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('stopped (%s)', async filename => {
-      const task = new ProcessTask(getFixturePath(filename))
+      const task = new ProcessTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {
@@ -154,7 +154,7 @@ describe('ProcessTask', () => {
       'commonjs/error-while-stopping.cjs'
     , 'esm/error-while-stopping.js'
     ])('error (%s)', async filename => {
-      const task = new ProcessTask(getFixturePath(filename))
+      const task = new ProcessTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {

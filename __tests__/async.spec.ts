@@ -1,15 +1,15 @@
-import { AsyncTask } from '@src/async/index.js'
+import { AsyncTaskFromModule } from '@src/async/index.js'
 import { TaskState } from '@fsm/task.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
 import { getFixturePath } from '@test/utils.js'
 import { delay } from 'extra-promise'
 
-describe('AsyncTask', () => {
+describe('AsyncTaskFromModule', () => {
   describe('init', () => {
     describe('module does not exist', () => {
       it('throws Error', async () => {
-        const task = new AsyncTask(getFixturePath('not-exist.js'))
+        const task = new AsyncTaskFromModule(getFixturePath('not-exist.js'))
 
         try {
           const err = await getErrorPromise(task.init())
@@ -28,7 +28,7 @@ describe('AsyncTask', () => {
     , 'esm/bad.js'
     ])('bad module (%s)', filename => {
       it('throws Error', async () => {
-        const task = new AsyncTask(getFixturePath(filename))
+        const task = new AsyncTaskFromModule(getFixturePath(filename))
 
         try {
           const err = await getErrorPromise(task.init())
@@ -44,7 +44,7 @@ describe('AsyncTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('created (%s)', async filename => {
-      const task = new AsyncTask(getFixturePath(filename))
+      const task = new AsyncTaskFromModule(getFixturePath(filename))
 
       expect(task.getStatus()).toBe(TaskState.Created)
     })
@@ -53,7 +53,7 @@ describe('AsyncTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('ready (%s)', async filename => {
-      const task = new AsyncTask(getFixturePath(filename))
+      const task = new AsyncTaskFromModule(getFixturePath(filename))
 
       try {
         await task.init()
@@ -70,7 +70,7 @@ describe('AsyncTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('running (%s)', async filename => {
-      const task = new AsyncTask(getFixturePath(filename))
+      const task = new AsyncTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {
@@ -88,7 +88,7 @@ describe('AsyncTask', () => {
       'commonjs/completed.cjs'
     , 'esm/completed.js'
     ])('completed (%s)', async filename => {
-      const task = new AsyncTask(getFixturePath(filename))
+      const task = new AsyncTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {
@@ -105,7 +105,7 @@ describe('AsyncTask', () => {
       'commonjs/error.cjs'
     , 'esm/error.js'
     ])('error (%s)', async filename => {
-      const task = new AsyncTask(getFixturePath(filename))
+      const task = new AsyncTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {
@@ -124,7 +124,7 @@ describe('AsyncTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('stopping (%s)', async filename => {
-      const task = new AsyncTask(getFixturePath(filename))
+      const task = new AsyncTaskFromModule(getFixturePath(filename))
       await task.init()
 
       task.run(undefined)
@@ -138,7 +138,7 @@ describe('AsyncTask', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('stopped (%s)', async filename => {
-      const task = new AsyncTask(getFixturePath(filename))
+      const task = new AsyncTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {
@@ -156,7 +156,7 @@ describe('AsyncTask', () => {
       'commonjs/error-while-stopping.cjs'
     , 'esm/error-while-stopping.js'
     ])('error (%s)', async filename => {
-      const task = new AsyncTask(getFixturePath(filename))
+      const task = new AsyncTaskFromModule(getFixturePath(filename))
       await task.init()
 
       try {

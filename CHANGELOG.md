@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/BlackGlory/boso/compare/v0.2.1...v0.3.0) (2022-05-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* - Rename `AsyncTask` to `AsyncTaskFromModule`
+- Rename `ProcessTask` to `ProcessTaskFromModule`
+- Rename `ThreadTask` to `ThreadTaskFromModule`
+
+### Features
+
+* add AsyncTaskFromFunction ([73e3fee](https://github.com/BlackGlory/boso/commit/73e3feecd6c6674a9060de79e2b6a6678f0ad1d7))
+
 ### [0.2.1](https://github.com/BlackGlory/boso/compare/v0.2.0...v0.2.1) (2022-05-10)
 
 ## [0.2.0](https://github.com/BlackGlory/boso/compare/v0.1.2...v0.2.0) (2022-05-10)

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/BlackGlory/boso/compare/v0.3.0...v0.4.0) (2022-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* rewrite
+
+### Features
+
+* rewrite ([130b38a](https://github.com/BlackGlory/boso/commit/130b38a831394248e4be2787784363e4e67691e9))
+
 ## [0.3.0](https://github.com/BlackGlory/boso/compare/v0.2.1...v0.3.0) (2022-05-12)
 
 

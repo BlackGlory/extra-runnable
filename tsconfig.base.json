@@ -13,7 +13,8 @@
   , "baseUrl": "."
   , "paths": {
       "@src/*": ["src/*"]
-    , "@fsm/*": ["src/fsm/*"]
+    , "@adapters/*": ["src/adapters/*"]
+    , "@fsm/*": ["src/utils/fsm/*"]
     , "@utils/*": ["src/utils/*"]
     , "@test/*": ["__tests__/*"]
     }

@@ -1,24 +1,16 @@
-import { createClient } from '@delight-rpc/worker-threads'
-import { ClientProxy } from 'delight-rpc'
-import { Worker } from 'node:worker_threads'
 import { Deferred } from 'extra-promise'
-import { ITask } from '@src/types.js'
+import { IAdapter } from '@src/types.js'
 import { TaskState, taskSchema } from '@fsm/task.js'
-import { IAPI } from './types.js'
-import { pass, assert } from '@blackglory/prelude'
+import { pass } from '@blackglory/prelude'
 import { FiniteStateMachine } from '@blackglory/structures'
-import { fileURLToPath } from 'node:url'
 
-const workerFilename = fileURLToPath(new URL('./worker.js', import.meta.url))
+export { TaskState } from '@fsm/task.js'
 
-export class ThreadTaskFromModule<Result, Args extends unknown[]> implements ITask<Result, Args> {
+export class Task<Result, Args extends unknown[]> {
   private task?: Deferred<void>
-  private worker?: Worker
-  private client?: ClientProxy<IAPI<Result, Args>>
-  private cancelClient?: () => void
   private fsm = new FiniteStateMachine(taskSchema, TaskState.Created)
 
-  constructor(private filename: string) {}
+  constructor(private adapter: IAdapter<Result, Args>) {}
 
   getStatus(): TaskState {
     return this.fsm.state
@@ -27,9 +19,7 @@ export class ThreadTaskFromModule<Result, Args extends unknown[]> implements ITa
   async init(): Promise<void> {
     this.fsm.send('init')
     try {
-      this.worker = new Worker(workerFilename)
-      ;[this.client, this.cancelClient] = createClient<IAPI<Result, Args>>(this.worker)
-      await this.client.init(this.filename)
+      await this.adapter.init()
       this.fsm.send('inited')
     } catch (e) {
       this.fsm.send('error')
@@ -39,13 +29,12 @@ export class ThreadTaskFromModule<Result, Args extends unknown[]> implements ITa
 
   async run(...args: Args): Promise<Result> {
     this.fsm.send('start')
-    assert(this.client, 'client is undefined')
 
     this.task = new Deferred<void>()
     Promise.resolve(this.task).catch(pass)
 
     try {
-      const promise = this.client.run(...args)
+      const promise = this.adapter.run(...args)
       this.fsm.send('started')
       const result = await promise
 
@@ -69,21 +58,16 @@ export class ThreadTaskFromModule<Result, Args extends unknown[]> implements ITa
 
   async abort(): Promise<void> {
     this.fsm.send('stop')
-    assert(this.client, 'client is undefined')
 
-    await this.client.abort()
+    await this.adapter.abort()
     await this.task
   }
 
-  destroy(): void {
+  async destroy(): Promise<void> {
     this.fsm.send('destroy')
 
-    this.cancelClient?.()
-    this.worker?.terminate()
+    await this.adapter.destroy()
 
-    delete this.cancelClient
-    delete this.worker
-    delete this.client
     delete this.task
   }
 }

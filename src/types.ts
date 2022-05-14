@@ -1,16 +1,11 @@
-import { TaskState } from '@fsm/task.js'
 import { Awaitable } from '@blackglory/prelude'
-
-export { TaskState } from '@fsm/task.js'
 
 export type TaskFunction<Result, Args extends unknown[]> =
   (signal: AbortSignal, ...args: Args) => Awaitable<Result>
 
-export interface ITask<Result, Args extends unknown[]> {
-  getStatus(): TaskState
-
-  init(): Promise<void>
-  run(...args: Args): Promise<Result>
-  abort(): Promise<void>
-  destroy(): void
+export interface IAdapter<Result, Args extends unknown[]> {
+  init(): Awaitable<void>
+  run(...args: Args): Awaitable<Result>
+  abort(): Awaitable<void>
+  destroy(): Awaitable<void>
 }

@@ -7,20 +7,8 @@ yarn add boso
 ```
 
 ## API
+### Task
 ```ts
-// export default function (signal: AbortSignal, ...args: Args) {...}
-type TaskFunction<Result, Args extends unknown[]> =
-  (signal: AbortSignal, ...args: Args) => Awaitable<Result>
-
-interface ITask<Result, Args extends unknown[]> {
-  getStatus(): TaskState
-
-  init(): Promise<void>
-  run(...args: Args): Promise<Result>
-  abort(): Promise<void>
-  destroy(): void
-}
-
 enum TaskState {
   Created = 'created'
 , Initializing = 'initializing'
@@ -33,29 +21,54 @@ enum TaskState {
 , Error = 'error'
 , Destroyed = 'destroyed'
 }
+
+class Task<Result, Args extends unknown[]> {
+  constructor(adapter: IAdapter<Result, Args>)
+
+  getStatus(): TaskState
+  async init(): Promise<void>
+  async run(...args: Args): Promise<Result>
+  async abort(): Promise<void>
+  async destroy(): Promise<void>
+}
+
 ```
 
-### AsyncTask
+### Adapter
 ```ts
-class AsyncTaskFromModule<Result, Args extends unknown[]> implements ITask<Result, Args> {
+interface IAdapter<Result, Args extends unknown[]> {
+  init(): Awaitable<void>
+  run(...args: Args): Awaitable<Result>
+  abort(): Awaitable<void>
+  destroy(): Awaitable<void>
+}
+
+// export default function (signal: AbortSignal, ...args: Args) {...}
+type TaskFunction<Result, Args extends unknown[]> =
+  (signal: AbortSignal, ...args: Args) => Awaitable<Result>
+```
+
+#### AsyncAdapter
+```ts
+class AsyncModuleAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
   constructor(filename: string)
 }
 
-class AsyncTaskFromFunction<Result, Args extends unknown[]> extends AsyncTask<Result, Args> {
+class AsyncFunctionAdapter<Result, Args extends unknown[]> implements <Result, Args> {
   constructor(taskFunction: TaskFunction<Result, Args>)
 }
 ```
 
-### ProcessTask
+#### ProcessAdapter
 ```ts
-class ProcessTaskFromModule<Result, Args extends unknown[]> implements ITask<Result, Args> {
+class ProcessAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
   constructor(filename: string)
 }
 ```
 
-### ThreadTask
+#### ThreadAdapter
 ```ts
-class ThreadTaskFromModule<Result, Args extends unknown[]> implements ITask<Result, Args> {
+class ThreadAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
   constructor(filename: string)
 }
 ```

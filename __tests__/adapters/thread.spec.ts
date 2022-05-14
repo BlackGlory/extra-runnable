@@ -1,22 +1,22 @@
-import { AsyncTaskFromModule } from '@src/async/index.js'
+import { ThreadAdapter } from '@src/adapters/thread/index.js'
+import { Task } from '@src/task.js'
 import { TaskState } from '@fsm/task.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
-import { getFixturePath } from '@test/utils.js'
+import { getFixturePath } from '@test/adapters/utils.js'
 import { delay } from 'extra-promise'
 
-describe('AsyncTaskFromModule', () => {
+describe('ThreadAdapter', () => {
   describe('init', () => {
     describe('module does not exist', () => {
       it('throws Error', async () => {
-        const task = new AsyncTaskFromModule(getFixturePath('not-exist.js'))
+        const adapter = new ThreadAdapter(getFixturePath('not-exist.js'))
+        const task = new Task(adapter)
 
         try {
           const err = await getErrorPromise(task.init())
 
-          // jest's bug: https://github.com/facebook/jest/issues/2549
-          // expect(err).toBeInstanceOf(Error)
-          expect(err).not.toBeUndefined()
+          expect(err).toBeInstanceOf(Error)
         } finally {
           task.destroy()
         }
@@ -28,7 +28,8 @@ describe('AsyncTaskFromModule', () => {
     , 'esm/bad.js'
     ])('bad module (%s)', filename => {
       it('throws Error', async () => {
-        const task = new AsyncTaskFromModule(getFixturePath(filename))
+        const adapter = new ThreadAdapter(getFixturePath(filename))
+        const task = new Task(adapter)
 
         try {
           const err = await getErrorPromise(task.init())
@@ -43,8 +44,9 @@ describe('AsyncTaskFromModule', () => {
     test.each([
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
-    ])('created (%s)', async filename => {
-      const task = new AsyncTaskFromModule(getFixturePath(filename))
+    ])('created (%s)', filename => {
+      const adapter = new ThreadAdapter(getFixturePath(filename))
+      const task = new Task(adapter)
 
       expect(task.getStatus()).toBe(TaskState.Created)
     })
@@ -53,7 +55,8 @@ describe('AsyncTaskFromModule', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('ready (%s)', async filename => {
-      const task = new AsyncTaskFromModule(getFixturePath(filename))
+      const adapter = new ThreadAdapter(getFixturePath(filename))
+      const task = new Task(adapter)
 
       try {
         await task.init()
@@ -70,11 +73,12 @@ describe('AsyncTaskFromModule', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('running (%s)', async filename => {
-      const task = new AsyncTaskFromModule(getFixturePath(filename))
+      const adapter = new ThreadAdapter(getFixturePath(filename))
+      const task = new Task(adapter)
       await task.init()
 
       try {
-        task.run(undefined)
+        task.run(undefined).catch(pass)
         await delay(1000)
 
         expect(task.getStatus()).toBe(TaskState.Running)
@@ -88,7 +92,8 @@ describe('AsyncTaskFromModule', () => {
       'commonjs/completed.cjs'
     , 'esm/completed.js'
     ])('completed (%s)', async filename => {
-      const task = new AsyncTaskFromModule(getFixturePath(filename))
+      const adapter = new ThreadAdapter(getFixturePath(filename))
+      const task = new Task(adapter)
       await task.init()
 
       try {
@@ -105,7 +110,8 @@ describe('AsyncTaskFromModule', () => {
       'commonjs/error.cjs'
     , 'esm/error.js'
     ])('error (%s)', async filename => {
-      const task = new AsyncTaskFromModule(getFixturePath(filename))
+      const adapter = new ThreadAdapter(getFixturePath(filename))
+      const task = new Task(adapter)
       await task.init()
 
       try {
@@ -124,10 +130,11 @@ describe('AsyncTaskFromModule', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('stopping (%s)', async filename => {
-      const task = new AsyncTaskFromModule(getFixturePath(filename))
+      const adapter = new ThreadAdapter(getFixturePath(filename))
+      const task = new Task(adapter)
       await task.init()
 
-      task.run(undefined)
+      task.run(undefined).catch(pass)
       await delay(1000)
       task.abort().then(() => task.destroy())
 
@@ -138,11 +145,12 @@ describe('AsyncTaskFromModule', () => {
       'commonjs/stopable.cjs'
     , 'esm/stopable.js'
     ])('stopped (%s)', async filename => {
-      const task = new AsyncTaskFromModule(getFixturePath(filename))
+      const adapter = new ThreadAdapter(getFixturePath(filename))
+      const task = new Task(adapter)
       await task.init()
 
       try {
-        task.run(undefined)
+        task.run(undefined).catch(pass)
         await delay(1000)
         await task.abort()
 
@@ -156,7 +164,8 @@ describe('AsyncTaskFromModule', () => {
       'commonjs/error-while-stopping.cjs'
     , 'esm/error-while-stopping.js'
     ])('error (%s)', async filename => {
-      const task = new AsyncTaskFromModule(getFixturePath(filename))
+      const adapter = new ThreadAdapter(getFixturePath(filename))
+      const task = new Task(adapter)
       await task.init()
 
       try {

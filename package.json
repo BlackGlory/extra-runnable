@@ -1,7 +1,7 @@
 {
   "name": "boso",
   "version": "0.4.0",
-  "description": "",
+  "description": "The encapsulated task class.",
   "keywords": [],
   "main": "src/index.js",
   "types": "src/index.d.ts",

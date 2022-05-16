@@ -1,4 +1,6 @@
 # Boso
+The encapsulated task class.
+
 ## Install
 ```sh
 npm install --save boso

@@ -56,7 +56,7 @@ class AsyncModuleAdapter<Result, Args extends unknown[]> implements IAdapter<Res
   constructor(filename: string)
 }
 
-class AsyncFunctionAdapter<Result, Args extends unknown[]> implements <Result, Args> {
+class AsyncFunctionAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
   constructor(taskFunction: TaskFunction<Result, Args>)
 }
 ```

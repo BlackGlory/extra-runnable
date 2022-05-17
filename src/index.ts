@@ -1,5 +1,3 @@
 export * from './task.js'
-export * from './adapters/async/index.js'
-export * from './adapters/thread/index.js'
-export * from './adapters/process/index.js'
 export * from './types.js'
+export * from '@adapters/async.js'

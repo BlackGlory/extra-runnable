@@ -1,63 +1,23 @@
-import { Task } from '@src/task.js'
-import { AsyncModuleAdapter } from '@adapters/async/index.js'
-import { TaskState } from '@fsm/task.js'
+import { jest } from '@jest/globals'
+import { Task, TaskState } from '@src/task.js'
+import { AsyncAdapter } from '@adapters/async.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
-import { getFixturePath } from '@test/adapters/utils.js'
 import { delay } from 'extra-promise'
 
-describe('AsyncModuleAdapter', () => {
+describe('AsyncAdapter', () => {
   describe('init', () => {
-    describe('module does not exist', () => {
-      it('throws Error', async () => {
-        const adapter = new AsyncModuleAdapter(getFixturePath('not-exist.js'))
-        const task = new Task(adapter)
-
-        try {
-          const err = await getErrorPromise(task.init())
-
-          // jest's bug: https://github.com/facebook/jest/issues/2549
-          // expect(err).toBeInstanceOf(Error)
-          expect(err).not.toBeUndefined()
-        } finally {
-          adapter.destroy()
-        }
-      })
-    })
-
-    describe.each([
-      'commonjs/bad.cjs'
-    , 'esm/bad.js'
-    ])('bad module (%s)', filename => {
-      it('throws Error', async () => {
-        const adapter = new AsyncModuleAdapter(getFixturePath(filename))
-        const task = new Task(adapter)
-
-        try {
-          const err = await getErrorPromise(task.init())
-
-          expect(err).toBeInstanceOf(Error)
-        } finally {
-          task.destroy()
-        }
-      })
-    })
-
-    test.each([
-      'commonjs/stopable.cjs'
-    , 'esm/stopable.js'
-    ])('created (%s)', async filename => {
-      const adapter = new AsyncModuleAdapter(getFixturePath(filename))
+    test('created', async () => {
+      const fn = jest.fn(stoppable)
+      const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
 
       expect(task.getStatus()).toBe(TaskState.Created)
     })
 
-    test.each([
-      'commonjs/stopable.cjs'
-    , 'esm/stopable.js'
-    ])('ready (%s)', async filename => {
-      const adapter = new AsyncModuleAdapter(getFixturePath(filename))
+    test('ready', async () => {
+      const fn = jest.fn(stoppable)
+      const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
 
       try {
@@ -71,16 +31,14 @@ describe('AsyncModuleAdapter', () => {
   })
 
   describe('run', () => {
-    test.each([
-      'commonjs/stopable.cjs'
-    , 'esm/stopable.js'
-    ])('running (%s)', async filename => {
-      const adapter = new AsyncModuleAdapter(getFixturePath(filename))
+    test('running', async () => {
+      const fn = jest.fn(stoppable)
+      const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
       await task.init()
 
       try {
-        task.run(undefined)
+        task.run()
         await delay(1000)
 
         expect(task.getStatus()).toBe(TaskState.Running)
@@ -90,16 +48,14 @@ describe('AsyncModuleAdapter', () => {
       }
     })
 
-    test.each([
-      'commonjs/completed.cjs'
-    , 'esm/completed.js'
-    ])('completed (%s)', async filename => {
-      const adapter = new AsyncModuleAdapter(getFixturePath(filename))
+    test('completed', async () => {
+      const fn = jest.fn(completed)
+      const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
       await task.init()
 
       try {
-        const result = await task.run(undefined)
+        const result = await task.run()
 
         expect(task.getStatus()).toBe(TaskState.Completed)
         expect(result).toBe('result')
@@ -108,16 +64,14 @@ describe('AsyncModuleAdapter', () => {
       }
     })
 
-    test.each([
-      'commonjs/error.cjs'
-    , 'esm/error.js'
-    ])('error (%s)', async filename => {
-      const adapter = new AsyncModuleAdapter(getFixturePath(filename))
+    test('error', async () => {
+      const fn = jest.fn(error)
+      const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
       await task.init()
 
       try {
-        const err = await getErrorPromise(task.run(undefined))
+        const err = await getErrorPromise(task.run())
 
         expect(err).toBeInstanceOf(Error)
         expect(task.getStatus()).toBe(TaskState.Error)
@@ -128,31 +82,27 @@ describe('AsyncModuleAdapter', () => {
   })
 
   describe('abort', () => {
-    test.each([
-      'commonjs/stopable.cjs'
-    , 'esm/stopable.js'
-    ])('stopping (%s)', async filename => {
-      const adapter = new AsyncModuleAdapter(getFixturePath(filename))
+    test('stopping', async () => {
+      const fn = jest.fn(stoppable)
+      const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
       await task.init()
 
-      task.run(undefined)
+      task.run()
       await delay(1000)
       task.abort().then(() => task.destroy())
 
       expect(task.getStatus()).toBe(TaskState.Stopping)
     })
 
-    test.each([
-      'commonjs/stopable.cjs'
-    , 'esm/stopable.js'
-    ])('stopped (%s)', async filename => {
-      const adapter = new AsyncModuleAdapter(getFixturePath(filename))
+    test('stopped', async () => {
+      const fn = jest.fn(stoppable)
+      const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
       await task.init()
 
       try {
-        task.run(undefined)
+        task.run()
         await delay(1000)
         await task.abort()
 
@@ -162,16 +112,14 @@ describe('AsyncModuleAdapter', () => {
       }
     })
 
-    test.each([
-      'commonjs/error-while-stopping.cjs'
-    , 'esm/error-while-stopping.js'
-    ])('error (%s)', async filename => {
-      const adapter = new AsyncModuleAdapter(getFixturePath(filename))
+    test('error', async () => {
+      const fn = jest.fn(errorWhileStopping)
+      const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
       await task.init()
 
       try {
-        task.run(undefined).catch(pass)
+        task.run().catch(pass)
         await delay(1000)
         const err = await getErrorPromise(task.abort())
 
@@ -183,3 +131,27 @@ describe('AsyncModuleAdapter', () => {
     })
   })
 })
+
+async function stoppable(signal: AbortSignal): Promise<void> {
+  while (true) {
+    await delay(100)
+    if (signal.aborted) break
+  }
+}
+
+async function errorWhileStopping(signal: AbortSignal): Promise<void> {
+  while (true) {
+    await delay(100)
+    if (signal.aborted) throw new Error('error while stopping')
+  }
+}
+
+async function error(signal: AbortSignal): Promise<void> {
+  await delay(100)
+  throw new Error('error')
+}
+
+async function completed(signal: AbortSignal): Promise<string> {
+  await delay(100)
+  return 'result'
+}

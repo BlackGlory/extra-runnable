@@ -33,7 +33,6 @@ class Task<Result, Args extends unknown[]> {
   async abort(): Promise<void>
   async destroy(): Promise<void>
 }
-
 ```
 
 ### Adapter
@@ -44,33 +43,14 @@ interface IAdapter<Result, Args extends unknown[]> {
   abort(): Awaitable<void>
   destroy(): Awaitable<void>
 }
-
-// export default function (signal: AbortSignal, ...args: Args) {...}
-type TaskFunction<Result, Args extends unknown[]> =
-  (signal: AbortSignal, ...args: Args) => Awaitable<Result>
 ```
 
 #### AsyncAdapter
 ```ts
-class AsyncModuleAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
-  constructor(filename: string)
-}
+type TaskFunction<Result, Args extends unknown[]> =
+  (signal: AbortSignal, ...args: Args) => PromiseLike<Result>
 
-class AsyncFunctionAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
+class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
   constructor(taskFunction: TaskFunction<Result, Args>)
-}
-```
-
-#### ProcessAdapter
-```ts
-class ProcessAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
-  constructor(filename: string)
-}
-```
-
-#### ThreadAdapter
-```ts
-class ThreadAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
-  constructor(filename: string)
 }
 ```

@@ -1,6 +1,6 @@
 {
   "name": "boso",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "The encapsulated task class.",
   "keywords": [],
   "main": "src/index.js",

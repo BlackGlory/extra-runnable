@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/BlackGlory/boso/compare/v0.5.0...v0.6.0) (2022-05-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* `getStatus` => `getState`
+
+* rename `getStatus` to `getState` ([a28bb08](https://github.com/BlackGlory/boso/commit/a28bb088f6f50c9f1d4b79d3dc90ddd774786de0))
+
 ## [0.5.0](https://github.com/BlackGlory/boso/compare/v0.4.1...v0.5.0) (2022-05-17)
 
 

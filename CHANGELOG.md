@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.6.1](https://github.com/BlackGlory/boso/compare/v0.6.0...v0.6.1) (2022-05-18)
+
+
+### Features
+
+* improve the return value of TaskFunction ([975e10a](https://github.com/BlackGlory/boso/commit/975e10a06d12b5169c737aa7f7146a660a6b8e34))
+
 ## [0.6.0](https://github.com/BlackGlory/boso/compare/v0.5.0...v0.6.0) (2022-05-18)
 
 

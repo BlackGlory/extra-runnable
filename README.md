@@ -48,7 +48,7 @@ interface IAdapter<Result, Args extends unknown[]> {
 #### AsyncAdapter
 ```ts
 type TaskFunction<Result, Args extends unknown[]> =
-  (signal: AbortSignal, ...args: Args) => PromiseLike<Result>
+  (signal: AbortSignal, ...args: Args) => Awaitable<Result>
 
 class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
   constructor(taskFunction: TaskFunction<Result, Args>)

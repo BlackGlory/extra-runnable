@@ -1,9 +1,9 @@
 import { IAdapter } from '@src/types.js'
-import { assert, pass, isntUndefined } from '@blackglory/prelude'
+import { assert, pass, isntUndefined, Awaitable } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
 
 export type TaskFunction<Result, Args extends unknown[]> =
-  (signal: AbortSignal, ...args: Args) => PromiseLike<Result>
+  (signal: AbortSignal, ...args: Args) => Awaitable<Result>
 
 export class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
   private controller?: AbortController

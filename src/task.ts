@@ -71,7 +71,7 @@ export class Task<Result, Args extends unknown[]> {
 
   constructor(private adapter: IAdapter<Result, Args>) {}
 
-  getStatus(): TaskState {
+  getState(): TaskState {
     return this.fsm.state
   }
 

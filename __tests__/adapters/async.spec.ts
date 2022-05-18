@@ -12,7 +12,7 @@ describe('AsyncAdapter', () => {
       const adapter = new AsyncAdapter(fn)
       const task = new Task(adapter)
 
-      expect(task.getStatus()).toBe(TaskState.Created)
+      expect(task.getState()).toBe(TaskState.Created)
     })
 
     test('ready', async () => {
@@ -23,7 +23,7 @@ describe('AsyncAdapter', () => {
       try {
         await task.init()
 
-        expect(task.getStatus()).toBe(TaskState.Ready)
+        expect(task.getState()).toBe(TaskState.Ready)
       } finally {
         task.destroy()
       }
@@ -41,7 +41,7 @@ describe('AsyncAdapter', () => {
         task.run()
         await delay(1000)
 
-        expect(task.getStatus()).toBe(TaskState.Running)
+        expect(task.getState()).toBe(TaskState.Running)
       } finally {
         await task.abort()
         task.destroy()
@@ -57,7 +57,7 @@ describe('AsyncAdapter', () => {
       try {
         const result = await task.run()
 
-        expect(task.getStatus()).toBe(TaskState.Completed)
+        expect(task.getState()).toBe(TaskState.Completed)
         expect(result).toBe('result')
       } finally {
         task.destroy()
@@ -74,7 +74,7 @@ describe('AsyncAdapter', () => {
         const err = await getErrorPromise(task.run())
 
         expect(err).toBeInstanceOf(Error)
-        expect(task.getStatus()).toBe(TaskState.Error)
+        expect(task.getState()).toBe(TaskState.Error)
       } finally {
         task.destroy()
       }
@@ -92,7 +92,7 @@ describe('AsyncAdapter', () => {
       await delay(1000)
       task.abort().then(() => task.destroy())
 
-      expect(task.getStatus()).toBe(TaskState.Stopping)
+      expect(task.getState()).toBe(TaskState.Stopping)
     })
 
     test('stopped', async () => {
@@ -106,7 +106,7 @@ describe('AsyncAdapter', () => {
         await delay(1000)
         await task.abort()
 
-        expect(task.getStatus()).toBe(TaskState.Stopped)
+        expect(task.getState()).toBe(TaskState.Stopped)
       } finally {
         task.destroy()
       }
@@ -124,7 +124,7 @@ describe('AsyncAdapter', () => {
         const err = await getErrorPromise(task.abort())
 
         expect(err).toBeInstanceOf(Error)
-        expect(task.getStatus()).toBe(TaskState.Stopped)
+        expect(task.getState()).toBe(TaskState.Stopped)
       } finally {
         task.destroy()
       }

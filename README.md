@@ -27,7 +27,7 @@ enum TaskState {
 class Task<Result, Args extends unknown[]> {
   constructor(adapter: IAdapter<Result, Args>)
 
-  getStatus(): TaskState
+  getState(): TaskState
   async init(): Promise<void>
   async run(...args: Args): Promise<Result>
   async abort(): Promise<void>

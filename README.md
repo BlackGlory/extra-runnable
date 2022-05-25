@@ -13,14 +13,15 @@ yarn add boso
 ```ts
 enum TaskState {
   Created = 'created' // => Initializing
-, Initializing = 'initializing' // => Ready or Error
+, Initializing = 'initializing' // => Ready or Crashed
+, Crashed = 'crashed' // => Initializing
 , Ready = 'ready' // => Starting or Destroyed
 , Starting = 'starting' // => Running or Error
 , Running = 'running' // => Stopping or Completed or Error
 , Stopping = 'stopping' // => Stopped
-, Stopped = 'stopped' // => Destroyed
-, Completed = 'completed' // => Destroyed
-, Error = 'error' // => Destroyed
+, Stopped = 'stopped' // => Destroyed or Starting
+, Completed = 'completed' // => Destroyed or Starting
+, Error = 'error' // => Destroyed or Starting
 , Destroyed = 'destroyed'
 }
 

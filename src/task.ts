@@ -14,6 +14,7 @@ type TaskEvent =
 | 'complete'
 | 'error'
 | 'destroy'
+| 'crash'
 
 export enum TaskState {
   Created = 'created'
@@ -26,6 +27,7 @@ export enum TaskState {
 , Completed = 'completed'
 , Error = 'error'
 , Destroyed = 'destroyed'
+, Crashed = 'crashed'
 }
 
 const taskSchema: IFiniteStateMachineSchema<TaskState, TaskEvent> = {
@@ -34,7 +36,10 @@ const taskSchema: IFiniteStateMachineSchema<TaskState, TaskEvent> = {
   }
 , [TaskState.Initializing]: {
     inited: TaskState.Ready
-  , error: TaskState.Error
+  , crash: TaskState.Crashed
+  }
+, [TaskState.Crashed]: {
+    init: TaskState.Initializing
   }
 , [TaskState.Ready]: {
     start: TaskState.Starting
@@ -51,15 +56,19 @@ const taskSchema: IFiniteStateMachineSchema<TaskState, TaskEvent> = {
   }
 , [TaskState.Stopping]: {
     stopped: TaskState.Stopped
+  , stop: TaskState.Stopping
   }
 , [TaskState.Stopped]: {
     destroy: TaskState.Destroyed
+  , start: TaskState.Starting
   }
 , [TaskState.Completed]: {
     destroy: TaskState.Destroyed
+  , start: TaskState.Starting
   }
 , [TaskState.Error]: {
     destroy: TaskState.Destroyed
+  , start: TaskState.Starting
   }
 , [TaskState.Destroyed]: {}
 }
@@ -81,7 +90,7 @@ export class Task<Result, Args extends unknown[]> {
       await this.adapter.init()
       this.fsm.send('inited')
     } catch (e) {
-      this.fsm.send('error')
+      this.fsm.send('crash')
       throw e
     }
   }
@@ -119,7 +128,11 @@ export class Task<Result, Args extends unknown[]> {
     this.fsm.send('stop')
 
     await this.adapter.abort()
-    await this.task
+    try {
+      await this.task
+    } catch {
+      pass()
+    }
   }
 
   async destroy(): Promise<void> {

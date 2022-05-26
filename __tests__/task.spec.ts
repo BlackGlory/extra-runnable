@@ -5,6 +5,7 @@ import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
 import { delay } from 'extra-promise'
 import { mocked } from 'jest-mock'
+import { AbortController } from 'extra-abort'
 
 describe('Task', () => {
   describe('create instance', () => {

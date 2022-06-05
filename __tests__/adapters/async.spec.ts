@@ -36,7 +36,7 @@ describe('AsyncAdapter', () => {
     adapter.init()
 
     const promise = adapter.run('arg')
-    await adapter.abort()
+    adapter.abort()
     const result = await promise
 
     expect(result).toBe('arg')

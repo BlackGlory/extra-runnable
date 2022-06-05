@@ -22,7 +22,7 @@ export class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Re
     return await this.taskFn(controller.signal, ...args)
   }
 
-  async abort(): Promise<void> {
+  abort(): void {
     assert(this.controller, 'controller is undefined')
 
     this.controller.abort()

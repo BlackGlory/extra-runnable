@@ -513,11 +513,6 @@
   resolved "https://registry.yarnpkg.com/@blackglory/go/-/go-1.0.0.tgz#8b4ae3234f6d3a78e3bdac40ff103d4935794a1a"
   integrity sha512-SFMYSrcA372VJSEpBKV7agNiixq286oCWNP9Sv/FQlPsHYM3TQKx1CM4dl+TO/vN9BlAbcs4MQ4ezqlLXxM/cg==
 
-"@blackglory/jest-node-exports-resolver@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@blackglory/jest-node-exports-resolver/-/jest-node-exports-resolver-0.1.0.tgz#feda8a73e0ea6ee4aec2a22a34afecf697d56f09"
-  integrity sha512-rPT8Rw+FV4VAJBDedrEzZOq0/lpy+Tp+4oFTlhbkA6hIN/Uj//YL4gEsY5CNqZ9li+mOLLX0BcTeHI8tGmrV2g==
-
 "@blackglory/log@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@blackglory/log/-/log-1.0.0.tgz#eec748cc8590348a33b3d5fe3f605d5da205d366"

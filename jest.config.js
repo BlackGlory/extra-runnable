@@ -5,7 +5,7 @@ module.exports = {
   preset: 'ts-jest'
 , testEnvironment: 'node'
 , testMatch: ['**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)']
-, resolver: 'jest-ts-webcompat-resolver'
+, resolver: '@blackglory/jest-resolver'
 , moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: '<rootDir>/'
   })

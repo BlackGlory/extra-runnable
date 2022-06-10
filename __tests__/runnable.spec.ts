@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals'
-import { Task, TaskState } from '@src/task.js'
+import { Runnable, RunnableState } from '@src/runnable.js'
 import { IAdapter } from '@src/types.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
@@ -7,13 +7,13 @@ import { delay } from 'extra-promise'
 import { mocked } from 'jest-mock'
 import { AbortController } from 'extra-abort'
 
-describe('Task', () => {
+describe('Runnable', () => {
   describe('create instance', () => {
     test('state should be created', async () => {
       const adapter = createAdapter()
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
 
-      expect(task.getState()).toBe(TaskState.Created)
+      expect(task.getState()).toBe(RunnableState.Created)
       expect(adapter.init).not.toBeCalled()
     })
   })
@@ -21,11 +21,11 @@ describe('Task', () => {
   describe('init', () => {
     test('state should be ready', async () => {
       const adapter = createAdapter()
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
 
       await task.init()
 
-      expect(task.getState()).toBe(TaskState.Ready)
+      expect(task.getState()).toBe(RunnableState.Ready)
       expect(adapter.init).toBeCalledTimes(1)
       expect(adapter.run).not.toBeCalled()
     })
@@ -36,11 +36,11 @@ describe('Task', () => {
       mocked(adapter.init).mockImplementation(() => {
         throw error
       })
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
 
       const err = await getErrorPromise(task.init())
 
-      expect(task.getState()).toBe(TaskState.Crashed)
+      expect(task.getState()).toBe(RunnableState.Crashed)
       expect(err).toBe(error)
       expect(adapter.init).toBeCalledTimes(1)
       expect(adapter.run).not.toBeCalled()
@@ -52,12 +52,12 @@ describe('Task', () => {
       mocked(adapter.init).mockImplementationOnce(() => {
         throw error
       })
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
 
       const err1 = await getErrorPromise(task.init())
       const err2 = await getErrorPromise(task.init())
 
-      expect(task.getState()).toBe(TaskState.Ready)
+      expect(task.getState()).toBe(RunnableState.Ready)
       expect(err1).toBe(error)
       expect(err2).toBeUndefined()
       expect(adapter.init).toBeCalledTimes(2)
@@ -75,14 +75,14 @@ describe('Task', () => {
           if (controller.signal.aborted) break
         }
       })
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
       await task.init()
 
       try {
         task.run()
         await delay(1000)
 
-        expect(task.getState()).toBe(TaskState.Running)
+        expect(task.getState()).toBe(RunnableState.Running)
         expect(adapter.run).toBeCalledTimes(1)
         expect(adapter.run).toBeCalledWith()
       } finally {
@@ -93,12 +93,12 @@ describe('Task', () => {
     test('state should be completed', async () => {
       const adapter = createAdapter()
       mocked(adapter.run).mockImplementation(() => 'result')
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
       await task.init()
 
       const result = await task.run()
 
-      expect(task.getState()).toBe(TaskState.Completed)
+      expect(task.getState()).toBe(RunnableState.Completed)
       expect(result).toBe('result')
       expect(adapter.run).toBeCalledTimes(1)
       expect(adapter.run).toBeCalledWith()
@@ -110,12 +110,12 @@ describe('Task', () => {
       mocked(adapter.run).mockImplementation(() => {
         throw error
       })
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
       await task.init()
 
       const err = await getErrorPromise(task.run())
 
-      expect(task.getState()).toBe(TaskState.Error)
+      expect(task.getState()).toBe(RunnableState.Error)
       expect(err).toBe(error)
       expect(adapter.run).toBeCalledTimes(1)
       expect(adapter.run).toBeCalledWith()
@@ -133,14 +133,14 @@ describe('Task', () => {
         }
       })
       mocked(adapter.abort).mockImplementation(() => controller.abort())
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
       await task.init()
 
       task.run()
       await delay(1000)
       task.abort()
 
-      expect(task.getState()).toBe(TaskState.Stopping)
+      expect(task.getState()).toBe(RunnableState.Stopping)
       expect(adapter.abort).toBeCalledTimes(1)
     })
 
@@ -154,14 +154,14 @@ describe('Task', () => {
         }
       })
       mocked(adapter.abort).mockImplementation(() => controller.abort())
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
       await task.init()
 
       task.run()
       await delay(1000)
       await task.abort()
 
-      expect(task.getState()).toBe(TaskState.Stopped)
+      expect(task.getState()).toBe(RunnableState.Stopped)
       expect(adapter.abort).toBeCalledTimes(1)
     })
 
@@ -176,14 +176,14 @@ describe('Task', () => {
           }
         })
         mocked(adapter.abort).mockImplementation(() => controller.abort())
-        const task = new Task(adapter)
+        const task = new Runnable(adapter)
         await task.init()
 
         task.run().catch(pass)
         await delay(1000)
         await task.abort()
 
-        expect(task.getState()).toBe(TaskState.Stopped)
+        expect(task.getState()).toBe(RunnableState.Stopped)
         expect(adapter.abort).toBeCalledTimes(1)
       })
     })
@@ -202,7 +202,7 @@ describe('Task', () => {
         mocked(adapter.abort).mockImplementation(() => {
           throw error
         })
-        const task = new Task(adapter)
+        const task = new Runnable(adapter)
         await task.init()
 
        try {
@@ -210,7 +210,7 @@ describe('Task', () => {
           await delay(1000)
           const err = await getErrorPromise(task.abort())
 
-          expect(task.getState()).toBe(TaskState.Stopping)
+          expect(task.getState()).toBe(RunnableState.Stopping)
           expect(err).toBe(error)
           expect(adapter.abort).toBeCalledTimes(1)
         } finally {
@@ -232,7 +232,7 @@ describe('Task', () => {
           mocked(adapter.abort).mockImplementation(() => {
             throw error
           })
-          const task = new Task(adapter)
+          const task = new Runnable(adapter)
           await task.init()
 
           try {
@@ -241,7 +241,7 @@ describe('Task', () => {
             const err1 = await getErrorPromise(task.abort())
             const err2 = await getErrorPromise(task.abort())
 
-            expect(task.getState()).toBe(TaskState.Stopping)
+            expect(task.getState()).toBe(RunnableState.Stopping)
             expect(err1).toBeInstanceOf(Error)
             expect(err2).toBeInstanceOf(Error)
             expect(adapter.abort).toBeCalledTimes(2)
@@ -267,7 +267,7 @@ describe('Task', () => {
       mocked(adapter.abort).mockImplementation(() => {
         controller.abort()
       })
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
       await task.init()
 
       try {
@@ -276,7 +276,7 @@ describe('Task', () => {
         await task.abort()
         task.run()
 
-        expect(task.getState()).toBe(TaskState.Running)
+        expect(task.getState()).toBe(RunnableState.Running)
         expect(adapter.init).toBeCalledTimes(1)
         expect(adapter.run).toBeCalledTimes(2)
       } finally {
@@ -289,13 +289,13 @@ describe('Task', () => {
       mocked(adapter.run).mockImplementation((text: string) => {
         return text
       })
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
       await task.init()
 
       const result1 = await task.run('result1')
       const result2 = await task.run('result2')
 
-      expect(task.getState()).toBe(TaskState.Completed)
+      expect(task.getState()).toBe(RunnableState.Completed)
       expect(result1).toBe('result1')
       expect(result2).toBe('result2')
       expect(adapter.init).toBeCalledTimes(1)
@@ -308,13 +308,13 @@ describe('Task', () => {
       mocked(adapter.run).mockImplementation(() => {
         throw error
       })
-      const task = new Task(adapter)
+      const task = new Runnable(adapter)
       await task.init()
 
       const err1 = await getErrorPromise(task.run())
       const err2 = await getErrorPromise(task.run())
 
-      expect(task.getState()).toBe(TaskState.Error)
+      expect(task.getState()).toBe(RunnableState.Error)
       expect(err1).toBe(error)
       expect(err2).toBe(error)
       expect(adapter.init).toBeCalledTimes(1)
@@ -324,7 +324,7 @@ describe('Task', () => {
 
   test('destroy', async () => {
     const adapter = createAdapter()
-    const task = new Task(adapter)
+    const task = new Runnable(adapter)
     await task.init()
 
     await task.destroy()

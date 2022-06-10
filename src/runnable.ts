@@ -4,7 +4,7 @@ import { pass } from '@blackglory/prelude'
 import { FiniteStateMachine } from '@blackglory/structures'
 import { IFiniteStateMachineSchema } from '@blackglory/structures'
 
-type TaskEvent =
+type Event =
 | 'init'
 | 'inited'
 | 'start'
@@ -16,7 +16,7 @@ type TaskEvent =
 | 'destroy'
 | 'crash'
 
-export enum TaskState {
+export enum RunnableState {
   Created = 'created'
 , Initializing = 'initializing'
 , Ready = 'ready'
@@ -30,57 +30,57 @@ export enum TaskState {
 , Crashed = 'crashed'
 }
 
-const taskSchema: IFiniteStateMachineSchema<TaskState, TaskEvent> = {
-  [TaskState.Created]: {
-    init: TaskState.Initializing
+const schema: IFiniteStateMachineSchema<RunnableState, Event> = {
+  [RunnableState.Created]: {
+    init: RunnableState.Initializing
   }
-, [TaskState.Initializing]: {
-    inited: TaskState.Ready
-  , crash: TaskState.Crashed
+, [RunnableState.Initializing]: {
+    inited: RunnableState.Ready
+  , crash: RunnableState.Crashed
   }
-, [TaskState.Crashed]: {
-    init: TaskState.Initializing
+, [RunnableState.Crashed]: {
+    init: RunnableState.Initializing
   }
-, [TaskState.Ready]: {
-    start: TaskState.Starting
-  , destroy: TaskState.Destroyed
+, [RunnableState.Ready]: {
+    start: RunnableState.Starting
+  , destroy: RunnableState.Destroyed
   }
-, [TaskState.Starting]: {
-    started: TaskState.Running
-  , error: TaskState.Error
+, [RunnableState.Starting]: {
+    started: RunnableState.Running
+  , error: RunnableState.Error
   }
-, [TaskState.Running]: {
-    stop: TaskState.Stopping
-  , complete: TaskState.Completed
-  , error: TaskState.Error
+, [RunnableState.Running]: {
+    stop: RunnableState.Stopping
+  , complete: RunnableState.Completed
+  , error: RunnableState.Error
   }
-, [TaskState.Stopping]: {
-    stopped: TaskState.Stopped
-  , stop: TaskState.Stopping
+, [RunnableState.Stopping]: {
+    stopped: RunnableState.Stopped
+  , stop: RunnableState.Stopping
   }
-, [TaskState.Stopped]: {
-    destroy: TaskState.Destroyed
-  , start: TaskState.Starting
+, [RunnableState.Stopped]: {
+    destroy: RunnableState.Destroyed
+  , start: RunnableState.Starting
   }
-, [TaskState.Completed]: {
-    destroy: TaskState.Destroyed
-  , start: TaskState.Starting
+, [RunnableState.Completed]: {
+    destroy: RunnableState.Destroyed
+  , start: RunnableState.Starting
   }
-, [TaskState.Error]: {
-    destroy: TaskState.Destroyed
-  , start: TaskState.Starting
+, [RunnableState.Error]: {
+    destroy: RunnableState.Destroyed
+  , start: RunnableState.Starting
   }
-, [TaskState.Destroyed]: {}
+, [RunnableState.Destroyed]: {}
 }
 
 
-export class Task<Result, Args extends unknown[]> {
+export class Runnable<Result, Args extends unknown[]> {
   private task?: Deferred<void>
-  private fsm = new FiniteStateMachine(taskSchema, TaskState.Created)
+  private fsm = new FiniteStateMachine(schema, RunnableState.Created)
 
   constructor(private adapter: IAdapter<Result, Args>) {}
 
-  getState(): TaskState {
+  getState(): RunnableState {
     return this.fsm.state
   }
 
@@ -106,7 +106,7 @@ export class Task<Result, Args extends unknown[]> {
       this.fsm.send('started')
       const result = await promise
 
-      if (this.fsm.matches(TaskState.Stopping)) {
+      if (this.fsm.matches(RunnableState.Stopping)) {
         this.fsm.send('stopped')
       } else {
         this.fsm.send('complete')
@@ -114,7 +114,7 @@ export class Task<Result, Args extends unknown[]> {
       this.task.resolve()
       return result
     } catch (e) {
-      if (this.fsm.matches(TaskState.Stopping)) {
+      if (this.fsm.matches(RunnableState.Stopping)) {
         this.fsm.send('stopped')
       } else {
         this.fsm.send('error')

@@ -1,14 +1,14 @@
 {
-  "name": "boso",
+  "name": "extra-runnable",
   "version": "0.7.2",
-  "description": "The encapsulated task class.",
+  "description": "The Runnable in JavaScript/Typescript.",
   "keywords": [],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib"
   ],
-  "repository": "git@github.com:BlackGlory/boso.git",
+  "repository": "git@github.com:BlackGlory/extra-runnable.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",
   "scripts": {

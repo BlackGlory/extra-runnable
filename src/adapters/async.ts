@@ -2,13 +2,13 @@ import { IAdapter } from '@src/types.js'
 import { assert, pass, isntUndefined, Awaitable } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
 
-export type TaskFunction<Result, Args extends unknown[]> =
+export type RunnableFunction<Result, Args extends unknown[]> =
   (signal: AbortSignal, ...args: Args) => Awaitable<Result>
 
 export class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
   private controller?: AbortController
 
-  constructor(private taskFn: TaskFunction<Result, Args>) {}
+  constructor(private fn: RunnableFunction<Result, Args>) {}
 
   init(): void {
     pass()
@@ -18,8 +18,8 @@ export class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Re
     const controller = new AbortController()
     this.controller = controller
 
-    assert(isntUndefined(this.taskFn), 'module is undefined')
-    return await this.taskFn(controller.signal, ...args)
+    assert(isntUndefined(this.fn), 'module is undefined')
+    return await this.fn(controller.signal, ...args)
   }
 
   abort(): void {

@@ -1,17 +1,17 @@
-# Boso
-The encapsulated task class.
+# extra-runnable
+The Runnable in JavaScript/Typescript.
 
 ## Install
 ```sh
-npm install --save boso
+npm install --save extra-runnable
 # or
-yarn add boso
+yarn add extra-runnable
 ```
 
 ## API
-### Task
+### Runnable
 ```ts
-enum TaskState {
+enum RunnableState {
   Created = 'created' // => Initializing
 , Initializing = 'initializing' // => Ready or Crashed
 , Crashed = 'crashed' // => Initializing
@@ -25,10 +25,10 @@ enum TaskState {
 , Destroyed = 'destroyed'
 }
 
-class Task<Result, Args extends unknown[]> {
+class Runnable<Result, Args extends unknown[]> {
   constructor(adapter: IAdapter<Result, Args>)
 
-  getState(): TaskState
+  getState(): RunnableState
   async init(): Promise<void>
   async run(...args: Args): Promise<Result>
   async abort(): Promise<void>
@@ -48,10 +48,10 @@ interface IAdapter<Result, Args extends unknown[]> {
 
 #### AsyncAdapter
 ```ts
-type TaskFunction<Result, Args extends unknown[]> =
+type RunnableFunction<Result, Args extends unknown[]> =
   (signal: AbortSignal, ...args: Args) => Awaitable<Result>
 
 class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
-  constructor(taskFunction: TaskFunction<Result, Args>)
+  constructor(fn: RunnableFunction<Result, Args>)
 }
 ```

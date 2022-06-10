@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/BlackGlory/extra-runnable/compare/v0.7.2...v1.0.0) (2022-06-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* - `Task` => `Runnable`
+- `TaskState` => `RunnableState`
+- `TaskFunction` => `RunnableFunction`
+
+### Features
+
+* rename package name ([3bc8673](https://github.com/BlackGlory/extra-runnable/commit/3bc86730122b5017c88ed4243ccbf1efdab0d143))
+
 ### [0.7.2](https://github.com/BlackGlory/boso/compare/v0.7.1...v0.7.2) (2022-06-08)
 
 ### [0.7.1](https://github.com/BlackGlory/boso/compare/v0.7.0...v0.7.1) (2022-06-05)

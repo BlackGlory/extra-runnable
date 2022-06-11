@@ -1,13 +1,8 @@
 import { maxCores, minusCores, halfCores } from 'hardware-concurrency'
 
-export function parseConcurrency(text: string): number | null {
-  if (text === 'max') {
-    return maxCores()
-  }
-
-  if (text === 'half') {
-    return halfCores()
-  }
+export function parseConcurrency(text: string): number {
+  if (text === 'max') return maxCores()
+  if (text === 'half') return halfCores()
 
   {
     const result = text.match(/^(?<threads>\d+)$/)
@@ -41,5 +36,5 @@ export function parseConcurrency(text: string): number | null {
     }
   }
 
-  return null
+  throw new Error('Invalid concurrency')
 }

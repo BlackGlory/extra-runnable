@@ -1,20 +1,30 @@
 #!/usr/bin/env node
 import { program } from 'commander'
-import { assert } from '@blackglory/errors'
-import createDebug from 'debug'
+import { assert, isntNull, isUndefined } from '@blackglory/prelude'
 import { parseConcurrency } from '@utils/parse-concurrency.js'
-import { isntNull, isUndefined } from '@blackglory/types'
-import { Daemon } from './daemon.js'
-import { startServer } from './server.js'
-import { registerInRegistry } from './registry.js'
-import { Mode, ITaskFactory } from './types.js'
-import { AsyncTaskFactory, ThreadTaskFactory, ProcessTaskFactory } from './tasks/index.js'
+import { Orchestrator } from '@orchestrator/index.js'
 import { nanoid } from 'nanoid'
+import { version, description } from '@utils/package.js'
+import { importConsumerModule } from '@utils/import-consumer-module.js'
+import { API } from '@rpc/api.js'
+import { connectRegistry } from '@rpc/connect-registry.js'
+import { startRPCServer } from '@rpc/start-rpc-server.js'
+import {
+  RunnableConsumerFromModule
+, RunnableConsumerFromModuleAsThread
+, RunnableConsumerFromModuleAsProcess
+} from '@adapters/index.js'
+import { RunnableConsumerFactory } from '@src/types.js'
+import { Destructor } from 'extra-defer'
+import { promisify } from 'util'
 import path from 'path'
-import { name, version, description } from '@utils/package.js'
-import { importTaskModule } from '@utils/import-module.js'
+import createDebug from 'debug'
 
-const debug = createDebug('cli')
+enum Mode {
+  Async
+, Thread
+, Process
+}
 
 interface IOptions {
   mode: string
@@ -25,55 +35,68 @@ interface IOptions {
   registry?: string
 }
 
+const debug = createDebug('cli')
+
 program
-  .name(name)
+  .name('run-consumers')
   .version(version)
   .description(description)
-  .requiredOption('--mode <mode>')
   .option('--id <id>')
   .option('--label <label>')
+  .option('--mode <mode>', '', 'async')
   .option('--concurrency <concurrency>', '', '1')
   .option('--port <port>', 'port')
   .option('--registry <url>')
   .argument('<filename>')
   .action(async (filename: string) => {
+    const destructor = new Destructor()
     const taskFilename = path.resolve(process.cwd(), filename)
     const options = program.opts<IOptions>()
-    const id: string = getId(options)
-    const label: string = getLabel(options)
-    const mode: Mode = getMode(options)
+    const id = getId(options)
+    const label = getLabel(options)
+    const mode = getMode(options)
     debug('mode: %s', mode)
     const concurrency: number = getConcurrency(options)
     debug('concurrency: %d', concurrency)
-    const port: number | null = getPort(options)
+    const port = getPort(options)
     debug('port: %d', port)
-    const registry: string | null = getRegistry(options)
+    const registry = getRegistry(options)
 
-    const daemon = new Daemon({
-      id
-    , label
-    , taskFactory: getTaskFactory(mode, taskFilename)
-    , taskModule: await importTaskModule(taskFilename)
+    const module = await importConsumerModule(taskFilename)
+    const params = module.init?.()
+
+    const orchestrator = new Orchestrator<unknown>(
+      getRunnableTaskFactory(mode, taskFilename)
+    , params
+    )
+
+    {
+    let error: Error | undefined
+    orchestrator.once('terminated', async () => {
+      try {
+        await destructor.execute()
+        await module.final?.(error)
+      } finally {
+        gracefulExit(error)
+      }
     })
-    daemon.setConcurrency(concurrency)
+    orchestrator.once('error', async err => console.error(err))
+    }
 
+    const api = new API(orchestrator, { id, label })
     if (isntNull(port)) {
-      startServer(daemon, port)
+      const server = startRPCServer(api, port)
+      destructor.defer(() => promisify(server.close)())
     }
 
     if (isntNull(registry)) {
-      registerInRegistry(daemon, registry)
+      const disconnect = connectRegistry(api, registry)
+      destructor.defer(disconnect)
     }
+
+    await orchestrator.scale(concurrency)
   })
   .parse()
-
-function getTaskFactory(mode: Mode, filename: string): ITaskFactory<unknown> {
-  switch (mode) {
-    case Mode.Async: return new AsyncTaskFactory(filename)
-    case Mode.Thread: return new ThreadTaskFactory(filename)
-    case Mode.Process: return new ProcessTaskFactory(filename)
-  }
-}
 
 function getId(options: IOptions): string {
   return options.id ?? nanoid()
@@ -115,4 +138,21 @@ function getRegistry(options: IOptions): string | null {
 
 function isNumberString(str: string): boolean {
   return /^\d+$/.test(str)
+}
+
+function getRunnableTaskFactory<Params>(mode: Mode, filename: string): RunnableConsumerFactory<Params> {
+  switch (mode) {
+    case Mode.Async: return () => new RunnableConsumerFromModule(filename)
+    case Mode.Thread: return () => new RunnableConsumerFromModuleAsThread(filename)
+    case Mode.Process: return () => new RunnableConsumerFromModuleAsProcess(filename)
+  }
+}
+
+function gracefulExit(error?: Error): never {
+  if (error) {
+    console.error(error)
+    process.exit(1)
+  } else {
+    process.exit()
+  }
 }

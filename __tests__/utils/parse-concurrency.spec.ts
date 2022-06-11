@@ -1,5 +1,6 @@
 import { parseConcurrency } from '@utils/parse-concurrency.js'
 import { maxCores, halfCores } from 'hardware-concurrency'
+import { getError } from 'return-style'
 
 describe('parseConcurrency(text: string): number | null', () => {
   describe('n', () => {
@@ -107,8 +108,8 @@ describe('parseConcurrency(text: string): number | null', () => {
   })
 
   test('invalid', () => {
-    const result = parseConcurrency('-100%')
+    const err = getError(() => parseConcurrency('-100%'))
 
-    expect(result).toBeNull()
+    expect(err).toBeInstanceOf(Error)
   })
 })

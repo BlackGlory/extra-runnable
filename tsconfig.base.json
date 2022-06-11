@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2018"
-  , "module": "ES2020"
-  , "moduleResolution": "Node"
+  , "module": "NodeNext"
+  , "moduleResolution": "NodeNext"
   , "strict": true
   , "esModuleInterop": true
-  , "newLine": "lf"
   , "plugins": [
       { "transform": "typescript-transform-paths" }
     , { "transform": "typescript-transform-paths", "afterDeclarations": true }
@@ -13,8 +12,10 @@
   , "baseUrl": "."
   , "paths": {
       "@src/*": ["src/*"]
+    , "@adapters/*": ["src/adapters/*"]
+    , "@orchestrator/*": ["src/orchestrator/*"]
+    , "@rpc/*": ["src/rpc/*"]
     , "@utils/*": ["src/utils/*"]
-    , "@tasks/*": ["src/tasks/*"]
     , "@test/*": ["__tests__/*"]
     }
   }

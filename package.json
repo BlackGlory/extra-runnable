@@ -1,7 +1,7 @@
 {
   "name": "extra-runnable",
   "version": "1.0.0",
-  "description": "The Runnable in JavaScript/Typescript.",
+  "description": "The Runnable and Runner in JavaScript/Typescript.",
   "keywords": [],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

@@ -12,7 +12,6 @@
   , "baseUrl": "."
   , "paths": {
       "@src/*": ["src/*"]
-    , "@adapters/*": ["src/adapters/*"]
     , "@utils/*": ["src/utils/*"]
     , "@test/*": ["__tests__/*"]
     }

@@ -1,5 +1,5 @@
 import { Deferred } from 'extra-promise'
-import { IAdapter } from '@src/types.js'
+import { IRunnable } from '@src/types.js'
 import { pass } from '@blackglory/prelude'
 import { FiniteStateMachine } from '@blackglory/structures'
 import { IFiniteStateMachineSchema } from '@blackglory/structures'
@@ -16,7 +16,7 @@ type Event =
 | 'destroy'
 | 'crash'
 
-export enum RunnableState {
+export enum RunnerState {
   Created = 'created'
 , Initializing = 'initializing'
 , Ready = 'ready'
@@ -30,57 +30,57 @@ export enum RunnableState {
 , Crashed = 'crashed'
 }
 
-const schema: IFiniteStateMachineSchema<RunnableState, Event> = {
-  [RunnableState.Created]: {
-    init: RunnableState.Initializing
+const schema: IFiniteStateMachineSchema<RunnerState, Event> = {
+  [RunnerState.Created]: {
+    init: RunnerState.Initializing
   }
-, [RunnableState.Initializing]: {
-    inited: RunnableState.Ready
-  , crash: RunnableState.Crashed
+, [RunnerState.Initializing]: {
+    inited: RunnerState.Ready
+  , crash: RunnerState.Crashed
   }
-, [RunnableState.Crashed]: {
-    init: RunnableState.Initializing
+, [RunnerState.Crashed]: {
+    init: RunnerState.Initializing
   }
-, [RunnableState.Ready]: {
-    start: RunnableState.Starting
-  , destroy: RunnableState.Destroyed
+, [RunnerState.Ready]: {
+    start: RunnerState.Starting
+  , destroy: RunnerState.Destroyed
   }
-, [RunnableState.Starting]: {
-    started: RunnableState.Running
-  , error: RunnableState.Error
+, [RunnerState.Starting]: {
+    started: RunnerState.Running
+  , error: RunnerState.Error
   }
-, [RunnableState.Running]: {
-    stop: RunnableState.Stopping
-  , complete: RunnableState.Completed
-  , error: RunnableState.Error
+, [RunnerState.Running]: {
+    stop: RunnerState.Stopping
+  , complete: RunnerState.Completed
+  , error: RunnerState.Error
   }
-, [RunnableState.Stopping]: {
-    stopped: RunnableState.Stopped
-  , stop: RunnableState.Stopping
+, [RunnerState.Stopping]: {
+    stopped: RunnerState.Stopped
+  , stop: RunnerState.Stopping
   }
-, [RunnableState.Stopped]: {
-    destroy: RunnableState.Destroyed
-  , start: RunnableState.Starting
+, [RunnerState.Stopped]: {
+    destroy: RunnerState.Destroyed
+  , start: RunnerState.Starting
   }
-, [RunnableState.Completed]: {
-    destroy: RunnableState.Destroyed
-  , start: RunnableState.Starting
+, [RunnerState.Completed]: {
+    destroy: RunnerState.Destroyed
+  , start: RunnerState.Starting
   }
-, [RunnableState.Error]: {
-    destroy: RunnableState.Destroyed
-  , start: RunnableState.Starting
+, [RunnerState.Error]: {
+    destroy: RunnerState.Destroyed
+  , start: RunnerState.Starting
   }
-, [RunnableState.Destroyed]: {}
+, [RunnerState.Destroyed]: {}
 }
 
 
-export class Runnable<Result, Args extends unknown[]> {
+export class Runner<Result, Args extends unknown[]> {
   private task?: Deferred<void>
-  private fsm = new FiniteStateMachine(schema, RunnableState.Created)
+  private fsm = new FiniteStateMachine(schema, RunnerState.Created)
 
-  constructor(private adapter: IAdapter<Result, Args>) {}
+  constructor(private adapter: IRunnable<Result, Args>) {}
 
-  getState(): RunnableState {
+  getState(): RunnerState {
     return this.fsm.state
   }
 
@@ -106,7 +106,7 @@ export class Runnable<Result, Args extends unknown[]> {
       this.fsm.send('started')
       const result = await promise
 
-      if (this.fsm.matches(RunnableState.Stopping)) {
+      if (this.fsm.matches(RunnerState.Stopping)) {
         this.fsm.send('stopped')
       } else {
         this.fsm.send('complete')
@@ -114,7 +114,7 @@ export class Runnable<Result, Args extends unknown[]> {
       this.task.resolve()
       return result
     } catch (e) {
-      if (this.fsm.matches(RunnableState.Stopping)) {
+      if (this.fsm.matches(RunnerState.Stopping)) {
         this.fsm.send('stopped')
       } else {
         this.fsm.send('error')

@@ -1,14 +1,11 @@
-import { IAdapter } from '@src/types.js'
+import { IRunnable } from '@src/types.js'
 import { assert, pass, isntUndefined, Awaitable } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
 
-export type RunnableFunction<Result, Args extends unknown[]> =
-  (signal: AbortSignal, ...args: Args) => Awaitable<Result>
-
-export class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
+export class RunnableFunction<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
   private controller?: AbortController
 
-  constructor(private fn: RunnableFunction<Result, Args>) {}
+  constructor(private fn: (signal: AbortSignal, ...args: Args) => Awaitable<Result>) {}
 
   init(): void {
     pass()

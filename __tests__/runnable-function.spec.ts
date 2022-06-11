@@ -1,24 +1,24 @@
 import { jest } from '@jest/globals'
-import { AsyncAdapter } from '@adapters/async.js'
+import { RunnableFunction } from '@src/runnable-function.js'
 import { AbortSignal } from 'extra-abort'
 import { delay } from 'extra-promise'
 
-describe('AsyncAdapter', () => {
+describe('RunnableFunction', () => {
   test('init', () => {
     const fn = jest.fn()
-    const adapter = new AsyncAdapter(fn)
+    const runnable = new RunnableFunction(fn)
 
-    adapter.init()
+    runnable.init()
 
     expect(fn).not.toBeCalled()
   })
 
   test('run', async () => {
     const fn = jest.fn((signal: AbortSignal, text: string) => text)
-    const adapter = new AsyncAdapter(fn)
-    adapter.init()
+    const runnable = new RunnableFunction(fn)
+    runnable.init()
 
-    const result = await adapter.run('arg')
+    const result = await runnable.run('arg')
 
     expect(fn).toBeCalledTimes(1)
     expect(fn).toBeCalledWith(expect.any(AbortSignal), 'arg')
@@ -32,11 +32,11 @@ describe('AsyncAdapter', () => {
         if (signal.aborted) return text
       }
     })
-    const adapter = new AsyncAdapter(fn)
-    adapter.init()
+    const runnable = new RunnableFunction(fn)
+    runnable.init()
 
-    const promise = adapter.run('arg')
-    adapter.abort()
+    const promise = runnable.run('arg')
+    runnable.abort()
     const result = await promise
 
     expect(result).toBe('arg')
@@ -44,10 +44,10 @@ describe('AsyncAdapter', () => {
 
   test('destroy', () => {
     const fn = jest.fn()
-    const adapter = new AsyncAdapter(fn)
-    adapter.init()
+    const runnable = new RunnableFunction(fn)
+    runnable.init()
 
-    adapter.destroy()
+    runnable.destroy()
 
     expect(fn).not.toBeCalled()
   })

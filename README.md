@@ -1,5 +1,5 @@
 # extra-runnable
-The Runnable in JavaScript/Typescript.
+The Runnable and Runner in JavaScript/Typescript.
 
 ## Install
 ```sh
@@ -9,9 +9,26 @@ yarn add extra-runnable
 ```
 
 ## API
-### Runnable
+### IRunnable
 ```ts
-enum RunnableState {
+interface IRunnable<Result, Args extends unknown[]> {
+  init(): Awaitable<void>
+  run(...args: Args): Awaitable<Result>
+  abort(): Awaitable<void>
+  destroy(): Awaitable<void>
+}
+```
+
+#### RunnableFunction
+```ts
+class RunnbleFunction<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
+  constructor(fn: (signal: AbortSignal, ...args: Args) => Awaitable<Result>)
+}
+```
+
+### Runner
+```ts
+enum RunnerState {
   Created = 'created' // => Initializing
 , Initializing = 'initializing' // => Ready or Crashed
 , Crashed = 'crashed' // => Initializing
@@ -25,33 +42,13 @@ enum RunnableState {
 , Destroyed = 'destroyed'
 }
 
-class Runnable<Result, Args extends unknown[]> {
-  constructor(adapter: IAdapter<Result, Args>)
+class Runner<Result, Args extends unknown[]> {
+  constructor(runnable: IRunnable<Result, Args>)
 
   getState(): RunnableState
   async init(): Promise<void>
   async run(...args: Args): Promise<Result>
   async abort(): Promise<void>
   async destroy(): Promise<void>
-}
-```
-
-### Adapter
-```ts
-interface IAdapter<Result, Args extends unknown[]> {
-  init(): Awaitable<void>
-  run(...args: Args): Awaitable<Result>
-  abort(): Awaitable<void>
-  destroy(): Awaitable<void>
-}
-```
-
-#### AsyncAdapter
-```ts
-type RunnableFunction<Result, Args extends unknown[]> =
-  (signal: AbortSignal, ...args: Args) => Awaitable<Result>
-
-class AsyncAdapter<Result, Args extends unknown[]> implements IAdapter<Result, Args> {
-  constructor(fn: RunnableFunction<Result, Args>)
 }
 ```

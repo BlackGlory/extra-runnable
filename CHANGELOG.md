@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/BlackGlory/extra-runnable/compare/v1.0.0...v2.0.0) (2022-06-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* - `Runnable` => `Runner`
+- `RunnableState` => `RunnerState`
+- `IAdapter` => `Runnable`
+- `AsyncAdapter` => `RunnableFunction`
+
+* rename ([135e013](https://github.com/BlackGlory/extra-runnable/commit/135e013ca9bccf289bf490357525cfeb82554969))
+
 ## [1.0.0](https://github.com/BlackGlory/extra-runnable/compare/v0.7.2...v1.0.0) (2022-06-10)
 
 

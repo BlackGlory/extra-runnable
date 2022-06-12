@@ -1,3 +1,6 @@
 export * from './runner.js'
 export * from './types.js'
 export * from './runnable-function.js'
+export * from './runnable-module.js'
+export * from './runnable-module-as-thread/index.js'
+export * from './runnable-module-as-process/index.js'

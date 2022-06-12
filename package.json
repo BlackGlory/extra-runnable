@@ -3,21 +3,28 @@
   "version": "2.0.0",
   "description": "The Runnable and Runner in JavaScript/Typescript.",
   "keywords": [],
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "sideEffects": true,
   "files": [
-    "lib"
+    "src/**/*.js",
+    "src/**/*.js.map",
+    "src/**/*.d.ts"
   ],
   "repository": "git@github.com:BlackGlory/extra-runnable.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
   "scripts": {
     "prepare": "ts-patch install -s",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx --quiet src",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx --quiet src __tests__",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand --config jest.config.js",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand --coverage --config jest.config.js",
     "prepublishOnly": "run-s prepare clean build",
-    "clean": "rimraf lib",
+    "clean": "rimraf 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
     "build": "tsc --project tsconfig.build.json",
     "release": "standard-version"
   },
@@ -52,7 +59,12 @@
   "dependencies": {
     "@blackglory/prelude": "^0.1.1",
     "@blackglory/structures": "^0.6.0",
+    "@blackglory/wait-for": "^0.5.1",
+    "@delight-rpc/child-process": "^0.4.2",
+    "@delight-rpc/worker-threads": "^4.0.1",
+    "delight-rpc": "^4.1.0",
     "extra-abort": "^0.1.2",
-    "extra-promise": "^2.0.0"
+    "extra-promise": "^2.0.0",
+    "extra-proxy": "^0.1.0"
   }
 }

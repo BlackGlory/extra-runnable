@@ -1,5 +1,5 @@
 import { isFunction, isObject } from '@blackglory/prelude'
-import { PrimitiveRunnableFunction } from '@src/types.js'
+import { PrimitiveRunnableFunction } from '@adapters/types.js'
 
 export async function importModule<Result, Args extends unknown[]>(filename: string): Promise<PrimitiveRunnableFunction<Result, Args>> {
   const module = await import(filename)

@@ -1,4 +1,4 @@
-import { RunnableModule } from '@src/runnable-module.js'
+import { RunnableModule } from '@adapters/runnable-module.js'
 import { getErrorPromise } from 'return-style'
 import { getFixturePath } from './utils.js'
 

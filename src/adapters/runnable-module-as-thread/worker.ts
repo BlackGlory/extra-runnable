@@ -5,8 +5,8 @@ import { WorkerState, workerSchema } from './fsm.js'
 import { FiniteStateMachine } from '@blackglory/structures'
 import { assert } from '@blackglory/errors'
 import { AbortController } from 'extra-abort'
-import { importModule } from '@src/utils.js'
-import { PrimitiveRunnableFunction } from '@src/types.js'
+import { importModule } from '@adapters/utils.js'
+import { PrimitiveRunnableFunction } from '@adapters/types.js'
 import { bind } from 'extra-proxy'
 
 assert(!isMainThread, 'This worker should not be run on main thread')

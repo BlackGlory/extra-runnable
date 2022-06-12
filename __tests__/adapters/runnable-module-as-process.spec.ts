@@ -1,4 +1,4 @@
-import { RunnableModuleAsProcess } from '@src/runnable-module-as-process/index.js'
+import { RunnableModuleAsProcess } from '@adapters/runnable-module-as-process/index.js'
 import { getErrorPromise } from 'return-style'
 import { getFixturePath } from './utils.js'
 

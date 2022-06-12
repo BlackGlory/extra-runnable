@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals'
-import { RunnableFunction } from '@src/runnable-function.js'
+import { RunnableFunction } from '@adapters/runnable-function.js'
 import { AbortSignal } from 'extra-abort'
 import { delay } from 'extra-promise'
 

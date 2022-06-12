@@ -1,4 +1,4 @@
-import { RunnableModuleAsThread } from '@src/runnable-module-as-thread/index.js'
+import { RunnableModuleAsThread } from '@adapters/runnable-module-as-thread/index.js'
 import { getErrorPromise } from 'return-style'
 import { getFixturePath } from './utils.js'
 

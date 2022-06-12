@@ -1,4 +1,5 @@
-import { IRunnable, PrimitiveRunnableFunction } from '@src/types.js'
+import { IRunnable } from '@src/types.js'
+import { PrimitiveRunnableFunction } from '@adapters/types.js'
 import { assert, pass, isntUndefined } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
 

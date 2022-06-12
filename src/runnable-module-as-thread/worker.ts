@@ -41,7 +41,7 @@ class RunnableWorker {
     this.controller.abort()
   }
 
-  static getStatus(): WorkerState {
+  static getState(): WorkerState {
     return this.fsm.state
   }
 }
@@ -49,7 +49,7 @@ class RunnableWorker {
 const boundRunnableWorker = bind(RunnableWorker)
 createServer<IAPI<unknown, unknown[]>>(
   {
-    getStatus: boundRunnableWorker.getStatus
+    getState: boundRunnableWorker.getState
   , init: boundRunnableWorker.init
   , run: boundRunnableWorker.run
   , abort: boundRunnableWorker.abort

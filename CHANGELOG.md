@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/BlackGlory/extra-runnable/compare/v2.0.0...v3.0.0) (2022-06-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* It is an ESM now.
+
+### Features
+
+* add RunnableModule, RunnableModuleAsThread, RunnableModuleAsProcess ([451eda8](https://github.com/BlackGlory/extra-runnable/commit/451eda8b939d11d12bb3185cfddbbd21ca8e53f0))
+
 ## [2.0.0](https://github.com/BlackGlory/extra-runnable/compare/v1.0.0...v2.0.0) (2022-06-11)
 
 

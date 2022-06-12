@@ -62,35 +62,29 @@ class RunnbleFunction<Result, Args extends unknown[]> implements IRunnable<Resul
 #### RunnableModule
 ```ts
 class RunnableModule<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
-  constructor(
-    /**
-     * @param filename export default as `PrimitiveRunnableFunction`
-     */
-    private filename: string
-  )
+  /**
+   * @param filename export default as `PrimitiveRunnableFunction`
+   */
+  constructor(filename: string)
 }
 ```
 
 #### RunnableModuleAsThread
 ```ts
 class RunnableModuleAsThread<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
-  constructor(
-    /**
-     * @param filename export default as `PrimitiveRunnableFunction`
-     */
-    private filename: string
-  )
+  /**
+   * @param filename export default as `PrimitiveRunnableFunction`
+   */
+  constructor(filename: string)
 }
 ```
 
 #### RunnableModuleAsProcess
 ```ts
 class RunnableModuleAsProcess<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
-  constructor(
-    /**
-     * @param filename export default as `PrimitiveRunnableFunction`
-     */
-    private filename: string
-  )
+  /**
+   * @param filename export default as `PrimitiveRunnableFunction`
+   */
+  constructor(filename: string)
 }
 ```

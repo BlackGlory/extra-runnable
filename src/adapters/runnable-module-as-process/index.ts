@@ -14,6 +14,9 @@ export class RunnableModuleAsProcess<Result, Args extends unknown[]> implements 
   private client?: ClientProxy<IAPI<Result, Args>>
   private cancelClient?: () => void
 
+  /**
+   * @param filename export default as `PrimitiveRunnableFunction`
+   */
   constructor(private filename: string) {}
 
   async init(): Promise<void> {

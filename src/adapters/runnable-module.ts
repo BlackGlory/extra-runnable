@@ -9,7 +9,7 @@ export class RunnableModule<Result, Args extends unknown[]> implements IRunnable
   private fn?: PrimitiveRunnableFunction<Result, Args>
 
   /**
-   * @param filename export default PrimitiveRunnableFunction
+   * @param filename export default as `PrimitiveRunnableFunction`
    */
   constructor(private filename: string) {}
 

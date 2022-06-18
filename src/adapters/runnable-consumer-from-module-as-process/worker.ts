@@ -41,14 +41,5 @@ class Worker {
   }
 }
 
-const worker = bind(Worker)
-createServer<IAPI<unknown>>(
-  {
-    getState: worker.getState
-  , init: worker.init
-  , run: worker.run
-  , abort: worker.abort
-  }
-, process
-)
+createServer<IAPI<unknown>>(Worker, process)
 process.send!('ready')

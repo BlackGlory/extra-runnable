@@ -1,15 +1,15 @@
 import { ImplementationOf } from 'delight-rpc'
 import { IAPI } from '@src/types.js'
 import { createRPCServerOnWebSocket } from './create-rpc-server.js'
-import ws from 'ws'
+import { WebSocketServer } from 'ws'
 
 export function startRPCServer(
-  api: ImplementationOf<IAPI>
+  service: ImplementationOf<IAPI>
 , port: number
-): ws.Server {
-  const server = new ws.Server({ port })
+): WebSocketServer {
+  const server = new WebSocketServer({ port })
   server.on('connection', socket => {
-    const close = createRPCServerOnWebSocket(api, socket)
+    const close = createRPCServerOnWebSocket(service, socket)
 
     socket.once('close', () => close())
   })

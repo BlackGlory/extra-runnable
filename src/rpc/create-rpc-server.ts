@@ -13,7 +13,6 @@ export function createRPCServerOnExtraWebSocket(
   return DelightRPCExtraWebSocket.createServer<IAPI>(api, ws, {
     loggerLevel: DelightRPCExtraWebSocket.Level.None
   , version
-  , ownPropsOnly: true
   })
 }
 
@@ -24,6 +23,5 @@ export function createRPCServerOnWebSocket(
   return DelightRPCWebSocket.createServer<IAPI>(api, ws, {
     loggerLevel: DelightRPCWebSocket.Level.None
   , version
-  , ownPropsOnly: true
   })
 }

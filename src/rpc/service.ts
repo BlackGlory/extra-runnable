@@ -2,7 +2,7 @@ import { Orchestrator, OrchestratorState } from '@orchestrator/index.js'
 import { IAPI } from '@src/types.js'
 import { ImplementationOf } from 'delight-rpc'
 
-export class API<Params> implements ImplementationOf<IAPI> {
+export class Service<Params> implements ImplementationOf<IAPI> {
   constructor(
     private orchestrator: Orchestrator<Params>
   , private options: {
@@ -15,13 +15,13 @@ export class API<Params> implements ImplementationOf<IAPI> {
     return this.options.id
   }
 
+  getLabel(): string {
+    return this.options.label
+  }
+
   setLabel(val: string): null {
     this.options.label = val
     return null
-  }
-
-  getLabel(): string {
-    return this.options.label
   }
 
   getState(): OrchestratorState {

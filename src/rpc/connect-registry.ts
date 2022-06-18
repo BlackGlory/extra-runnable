@@ -5,14 +5,15 @@ import { IAPI } from '@src/types.js'
 import WebSocket from 'ws'
 import ms from 'ms'
 
-export function connectRegistry(
-  api: ImplementationOf<IAPI>
+export async function connectRegistry(
+  service: ImplementationOf<IAPI>
 , registry: string
-): () => Promise<void> {
+): Promise<() => Promise<void>> {
   const ws = new ExtraWebSocket(() => new WebSocket(registry))
   const cancelHeartbeat = startHeartbeat(ws, ms('30s'))
   const cancelAutoReonnect = autoReconnect(ws)
-  const closeRPCServer = createRPCServerOnExtraWebSocket(api, ws)
+  const closeRPCServer = createRPCServerOnExtraWebSocket(service, ws)
+  await ws.connect()
 
   return async () => {
     closeRPCServer()

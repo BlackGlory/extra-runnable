@@ -47,13 +47,4 @@ class Worker {
   }
 }
 
-const worker = bind(Worker)
-createServer<IAPI<unknown>>(
-  {
-    getState: worker.getState
-  , init: worker.init
-  , run: worker.run
-  , abort: worker.abort
-  }
-, parentPort
-)
+createServer<IAPI<unknown>>(Worker, parentPort)

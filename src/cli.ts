@@ -6,7 +6,7 @@ import { Orchestrator } from '@orchestrator/index.js'
 import { nanoid } from 'nanoid'
 import { version, description } from '@utils/package.js'
 import { importConsumerModule } from '@utils/import-consumer-module.js'
-import { API } from '@rpc/api.js'
+import { Service } from '@rpc/service.js'
 import { connectRegistry } from '@rpc/connect-registry.js'
 import { startRPCServer } from '@rpc/start-rpc-server.js'
 import {
@@ -19,6 +19,7 @@ import { Destructor } from 'extra-defer'
 import { promisify } from 'util'
 import path from 'path'
 import createDebug from 'debug'
+import { youDied } from 'you-died'
 
 enum Mode {
   Async
@@ -71,26 +72,27 @@ program
     )
 
     {
-    let error: Error | undefined
-    orchestrator.once('terminated', async () => {
-      try {
-        await destructor.execute()
-        await module.final?.(error)
-      } finally {
-        gracefulExit(error)
-      }
-    })
-    orchestrator.once('error', async err => console.error(err))
+      let error: Error | undefined
+      orchestrator.once('terminated', async () => {
+        try {
+          await destructor.execute()
+          await module.final?.(error)
+        } finally {
+          gracefulExit(error)
+        }
+      })
+      orchestrator.once('error', async err => console.error(err))
+      youDied(() => orchestrator.terminate())
     }
 
-    const api = new API(orchestrator, { id, label })
+    const service = new Service(orchestrator, { id, label })
     if (isntNull(port)) {
-      const server = startRPCServer(api, port)
+      const server = startRPCServer(service, port)
       destructor.defer(() => promisify(server.close)())
     }
 
     if (isntNull(registry)) {
-      const disconnect = connectRegistry(api, registry)
+      const disconnect = await connectRegistry(service, registry)
       destructor.defer(disconnect)
     }
 

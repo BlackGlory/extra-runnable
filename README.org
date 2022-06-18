@@ -142,9 +142,9 @@ class RunnableConsumerFromModuleAsProcess<Params> implements RunnableConsumer<Pa
 #+END_SRC
 
 *** RPC
-**** API
+**** Service
 #+BEGIN_SRC typescript
-class API<Params> implements ImplementationOf<IAPI> {
+class Service<Params> implements ImplementationOf<IAPI> {
   constructor(
     orchestrator: Orchestrator<Params>
   , options: {
@@ -160,15 +160,15 @@ class API<Params> implements ImplementationOf<IAPI> {
 
 #+BEGIN_SRC typescript
 function startRPCServer(
-  api: ImplementationOf<IAPI>
+  service: ImplementationOf<IAPI>
 , port: number
-): ws.Server
+): WebSocketServer
 #+END_SRC
 
 **** connectRegistry
 #+BEGIN_SRC typescript
 function connectRegistry(
-  api: ImplementationOf<IAPI>
+  service: ImplementationOf<IAPI>
 , registry: string
 ): () => Promise<void>
 #+END_SRC
@@ -176,7 +176,7 @@ function connectRegistry(
 **** createRPCServerOnExtraWebSocket
 #+BEGIN_SRC typescript
 function createRPCServerOnExtraWebSocket(
-  api: ImplementationOf<IAPI>
+  service: ImplementationOf<IAPI>
 , ws: ExtraWebSocket
 ): () => void
 #+END_SRC
@@ -184,7 +184,7 @@ function createRPCServerOnExtraWebSocket(
 **** createRPCServerOnWebSocket
 #+BEGIN_SRC typescript
 function createRPCServerOnWebSocket(
-  api: ImplementationOf<IAPI>
+  service: ImplementationOf<IAPI>
 , ws: WebSocket
 ): () => void
 #+END_SRC

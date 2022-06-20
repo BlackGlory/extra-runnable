@@ -20,6 +20,7 @@ import { promisify } from 'util'
 import path from 'path'
 import createDebug from 'debug'
 import { youDied } from 'you-died'
+import { waitForInput } from 'extra-prompts'
 
 enum Mode {
   Async
@@ -97,6 +98,12 @@ program
     }
 
     await orchestrator.scale(concurrency)
+
+    await waitForInput(
+      'Press q to terminate the orchestrator...'
+    , key => key === 'q'
+    )
+    await orchestrator.terminate()
   })
   .parse()
 

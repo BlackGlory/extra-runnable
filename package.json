@@ -78,6 +78,7 @@
     "extra-abort": "^0.1.2",
     "extra-filesystem": "^0.4.2",
     "extra-promise": "^2.1.1",
+    "extra-prompts": "^0.1.1",
     "extra-proxy": "^0.1.0",
     "extra-runnable": "^3.0.1",
     "extra-timers": "^0.2.5",

@@ -178,6 +178,7 @@ function connectRegistry(
 function createRPCServerOnExtraWebSocket(
   service: ImplementationOf<IAPI>
 , ws: ExtraWebSocket
+, channel?: string
 ): () => void
 #+END_SRC
 
@@ -186,6 +187,7 @@ function createRPCServerOnExtraWebSocket(
 function createRPCServerOnWebSocket(
   service: ImplementationOf<IAPI>
 , ws: WebSocket
+, channel?: string
 ): () => void
 #+END_SRC
 

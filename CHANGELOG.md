@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/BlackGlory/consumer/compare/v0.5.0...v1.0.0) (2022-06-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* rewrite
+
+### Features
+
+* add manually quitting support ([2fcaa8e](https://github.com/BlackGlory/consumer/commit/2fcaa8ea388690cd618f986cfe0691f5f513a278))
+* rewrite ([5eef0a5](https://github.com/BlackGlory/consumer/commit/5eef0a5dec3804fcf48d5028532fdd9a783644f4))
+* rewrite ([82366e3](https://github.com/BlackGlory/consumer/commit/82366e377d85fa6cd117b9089aa774a7d5a107ca))
+
 ## [0.5.0](https://github.com/BlackGlory/gado/compare/v0.4.0...v0.5.0) (2022-05-07)
 
 

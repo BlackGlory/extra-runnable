@@ -535,6 +535,13 @@
   dependencies:
     "@blackglory/types" "^1.0.0"
 
+"@blackglory/log@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@blackglory/log/-/log-1.2.0.tgz#779788b859675d2c46f8f183cf52ab21d5d83a8f"
+  integrity sha512-bzrYPgWPkI5EMUC2IEKRPX3Op+1ifpKsAzQWn1IjF/lSF/ukmVn8OgWOhRXNGt8ddNekWaBSWuERHy1JPxHzbA==
+  dependencies:
+    "@blackglory/types" "^1.1.0"
+
 "@blackglory/observe@^0.1.5":
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@blackglory/observe/-/observe-0.1.5.tgz#dd180c112b84b58358dc068c9ae10ed4f3557201"
@@ -579,6 +586,20 @@
     "@blackglory/types" "^1.1.0"
     extra-lazy "^1.0.1"
     iterable-operator "^1.0.1"
+    justypes "^2.0.0"
+
+"@blackglory/prelude@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@blackglory/prelude/-/prelude-0.1.2.tgz#9ab094f0c49f5b058ac6f937d3552e7ad994cabe"
+  integrity sha512-8uUjp7OYjJhHgILTRPouuDxWl30OgzTJonHAnGEqSV+3zg4MFO8+T+2kDKojPGGJY7p7xL7Uj20r85EQLN07Ag==
+  dependencies:
+    "@blackglory/errors" "^2.2.1"
+    "@blackglory/go" "^1.1.1"
+    "@blackglory/log" "^1.2.0"
+    "@blackglory/pass" "^1.0.0"
+    "@blackglory/types" "^1.2.0"
+    extra-lazy "^1.1.1"
+    iterable-operator "^1.1.0"
     justypes "^2.0.0"
 
 "@blackglory/structures@^0.3.4":
@@ -643,6 +664,14 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-1.1.0.tgz#fa618e2289054b0d870b9e543a2b201eae81c3c0"
   integrity sha512-bSdRnP99H53WV2PR+P9Wc52hedIZPaHX2s+/J5112vcoXHoo19brxGu6XiAc5wnf4/AZYprcUoV7fQDu5TecFw==
+  dependencies:
+    justypes "^2.0.0"
+    lodash "^4.17.21"
+
+"@blackglory/types@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-1.2.0.tgz#a420ac8e4be1856ade0d47f72091fea45105b017"
+  integrity sha512-666XgMLvE6C9lNxmj2x6PwEycQMAH5U7/sRXLnhPE4/LUY6YaZ+LxaFT3j7jK5yfwjWVuebGmx1cvBKygi+Xfw==
   dependencies:
     justypes "^2.0.0"
     lodash "^4.17.21"
@@ -846,17 +875,27 @@
     "@delight-rpc/protocol" "^2.2.0"
     extra-promise "^2.0.0"
 
-"@delight-rpc/extra-websocket@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@delight-rpc/extra-websocket/-/extra-websocket-0.3.0.tgz#c788531edc46ca138bcbe570fb03c757bfb50322"
-  integrity sha512-ZE/VSAvIzKqGbAAht2gVsD37yDL2FP6GZmaPKG0vMSmO9PWdbdSwYXiP3oVk6PoqaDQjhJM+PgE1rmbe4+tfTQ==
+"@delight-rpc/child-process@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@delight-rpc/child-process/-/child-process-0.4.3.tgz#762a55c124efc1c34c96545598cb3897bd7af8ab"
+  integrity sha512-V6j7yyc6wKgwMkxXYycOuFLtooMn7JguNapJES8ex7erQVtqnGsNG2Sef2Xh6oj1JocwWSVXe650mEGfyu3XXg==
   dependencies:
     "@blackglory/errors" "^2.2.1"
-    "@blackglory/prelude" "^0.1.1"
+    "@blackglory/prelude" "^0.1.2"
+    "@delight-rpc/protocol" "^2.2.0"
+    extra-promise "^2.2.0"
+
+"@delight-rpc/extra-websocket@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@delight-rpc/extra-websocket/-/extra-websocket-0.3.1.tgz#ee4932e10c3861de98cdbfec39cd90ada35fca04"
+  integrity sha512-wKVkxt+0RC9Aq1ekmMAbkHeFHhLyvISP6lOCrmrBXKYrGu7k4nVm+PUzVmgy2rey+Dfoj3njcPmavblHMqQlnQ==
+  dependencies:
+    "@blackglory/errors" "^2.2.1"
+    "@blackglory/prelude" "^0.1.2"
     "@delight-rpc/protocol" "^2.2.0"
     extra-abort "^0.1.2"
     extra-logger "^0.6.8"
-    extra-promise "^2.0.0"
+    extra-promise "^2.2.0"
     return-style "^1.0.0"
 
 "@delight-rpc/protocol@^2.2.0":
@@ -867,17 +906,17 @@
     "@blackglory/errors" "^2.2.1"
     "@blackglory/prelude" "^0.1.1"
 
-"@delight-rpc/websocket@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@delight-rpc/websocket/-/websocket-0.5.2.tgz#949369343a8ff75af2d4a16b639c26e6cd062141"
-  integrity sha512-p7RKllo9xUEr1cBCpt5xhEsMgCJNj3bHETxALhr3Y40cWk8AJNTyoTxok97vup9xboG8+w1AE+EIhIIQ+pME5w==
+"@delight-rpc/websocket@^0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@delight-rpc/websocket/-/websocket-0.5.3.tgz#12a2766ed6383e7692487ea77787d19bd42ffd34"
+  integrity sha512-IderUaobpSyQt46B/+pUiqHj3DsoxdpxmLcLB/UjoRd1YSNO/tkSU5vDtI8wX235D0GM42dykfiC7bIpq0e1OQ==
   dependencies:
     "@blackglory/errors" "^2.2.1"
-    "@blackglory/prelude" "^0.1.1"
+    "@blackglory/prelude" "^0.1.2"
     "@delight-rpc/protocol" "^2.2.0"
     extra-abort "^0.1.2"
     extra-logger "^0.6.8"
-    extra-promise "^2.0.0"
+    extra-promise "^2.2.0"
     return-style "^1.0.0"
 
 "@delight-rpc/worker-threads@^4.0.1":
@@ -889,6 +928,16 @@
     "@blackglory/prelude" "^0.1.1"
     "@delight-rpc/protocol" "^2.2.0"
     extra-promise "^2.0.0"
+
+"@delight-rpc/worker-threads@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@delight-rpc/worker-threads/-/worker-threads-4.0.2.tgz#3f69e57b568230fb55e50fe9d3d8b174812c530e"
+  integrity sha512-WVIgRdWqjVtrI9MpjAENDmgZyjR1BVmJGWPnV+A3Ua3zPydhHP7IUGFbCwjOziDulvMdeosRt3RSCi/nTv5jMw==
+  dependencies:
+    "@blackglory/errors" "^2.2.1"
+    "@blackglory/prelude" "^0.1.2"
+    "@delight-rpc/protocol" "^2.2.0"
+    extra-promise "^2.2.0"
 
 "@eslint/eslintrc@^1.3.0":
   version "1.3.0"
@@ -2233,6 +2282,21 @@ delight-rpc@^4.1.0:
     object-path-operator "^5.2.0"
     return-style "^1.0.0"
 
+delight-rpc@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/delight-rpc/-/delight-rpc-4.2.1.tgz#e04f3e0420cf636838cd0ad210d321a5d6085dff"
+  integrity sha512-l1MTNLWA+HIW6xZT0UJyhgV1Q/DNFnxft7u9IoQiUtzyI9wUF7JPG24qNcKhtWJRJbI0/LjTLQayKgsiqanEzw==
+  dependencies:
+    "@blackglory/errors" "^2.2.1"
+    "@blackglory/prelude" "^0.1.2"
+    "@delight-rpc/protocol" "^2.2.0"
+    extra-promise "^2.2.0"
+    extra-semver "^0.1.0"
+    hotypes "^0.4.4"
+    nanoid "^3.3.4"
+    object-path-operator "^5.2.0"
+    return-style "^1.0.0"
+
 detect-indent@^6.0.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/detect-indent/-/detect-indent-6.1.0.tgz#592485ebbbf6b3b1ab2be175c8393d04ca0d57e6"
@@ -2584,7 +2648,7 @@ extra-lazy@^0.1.0:
   dependencies:
     lodash.once "^4.1.1"
 
-extra-lazy@^1.0.0, extra-lazy@^1.0.1:
+extra-lazy@^1.0.0, extra-lazy@^1.0.1, extra-lazy@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/extra-lazy/-/extra-lazy-1.1.1.tgz#47983311aa339caf985c3b169565024585a44d5f"
   integrity sha512-lkSqIqohXIo0MUByHLCk7EmFbMVrpoIltcBGV5TwZUJASsDgmvPUEruGR0Idp5TZaFwtS8B+ymBIrZpWJtZMhw==
@@ -2651,7 +2715,7 @@ extra-promise@^2.0.0:
     lodash "^4.17.21"
     return-style "^1.0.0"
 
-extra-promise@^2.1.1:
+extra-promise@^2.1.1, extra-promise@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/extra-promise/-/extra-promise-2.2.0.tgz#61c69f92bad02fc1e86af1e8fa92cff91f799448"
   integrity sha512-aP6/W9OQYhAL/SJENwlZ4DNd46lP5KKXPvGSKJ+tC5h/i2wOYz2hdevR7JkN66EdZr00FU8P1UYr6brHH6xrCg==

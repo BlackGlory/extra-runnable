@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/BlackGlory/consumer/compare/v1.0.0...v2.0.0) (2022-06-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* The CLI name is changed
+* All RPC related APIs are removed
+
+### Features
+
+* add support for `channel` of delight-rpc ([7075f57](https://github.com/BlackGlory/consumer/commit/7075f57ceceed8397a98b81f74e81c75af14701b))
+* remove all RPC related APIs ([a847293](https://github.com/BlackGlory/consumer/commit/a8472933b810c0feba1fe2ef19fe357ba99ba004))
+
+
+* rename `run-consumers` to `run-consumer-module` ([d950077](https://github.com/BlackGlory/consumer/commit/d95007761f484fe0a1e6c65f0f47398828921270))
+
 ## [1.0.0](https://github.com/BlackGlory/consumer/compare/v0.5.0...v1.0.0) (2022-06-20)
 
 

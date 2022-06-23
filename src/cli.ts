@@ -6,9 +6,11 @@ import { Orchestrator } from '@orchestrator/index.js'
 import { nanoid } from 'nanoid'
 import { version, description } from '@utils/package.js'
 import { importConsumerModule } from '@utils/import-consumer-module.js'
-import { Service } from '@rpc/service.js'
-import { connectRegistry } from '@rpc/connect-registry.js'
-import { startRPCServer } from '@rpc/start-rpc-server.js'
+import { API } from '@src/api.js'
+import {
+  createRPCServerOnExtraWebSocket
+, createRPCServerOnWebSocketServer
+} from '@utils/create-rpc-server.js'
 import {
   RunnableConsumerFromModule
 , RunnableConsumerFromModuleAsThread
@@ -21,6 +23,10 @@ import path from 'path'
 import createDebug from 'debug'
 import { youDied } from 'you-died'
 import { waitForInput } from 'extra-prompts'
+import { WebSocket, WebSocketServer } from 'ws'
+import { AnyChannel } from 'delight-rpc'
+import { ExtraWebSocket } from 'extra-websocket'
+import * as DelightRPCWebSocket from '@delight-rpc/websocket'
 
 enum Mode {
   Async
@@ -86,21 +92,35 @@ program
       youDied(() => orchestrator.terminate())
     }
 
-    const service = new Service(orchestrator, { id, label })
+    const service = new API(orchestrator, { id, label })
     if (isntNull(port)) {
-      const server = startRPCServer(service, port)
-      destructor.defer(() => promisify(server.close)())
+      const wsServer = new WebSocketServer({ port })
+      destructor.defer(() => promisify(wsServer.close).bind(wsServer))
+
+      const closeRPCServer = createRPCServerOnWebSocketServer(service, wsServer, {
+        channel: AnyChannel
+      , loggerLevel: DelightRPCWebSocket.Level.Info
+      })
+      destructor.defer(closeRPCServer)
     }
 
     if (isntNull(registry)) {
-      const disconnect = await connectRegistry(service, registry)
-      destructor.defer(disconnect)
+      const ws = new ExtraWebSocket(() => new WebSocket(registry))
+
+      const closeRPCServer = createRPCServerOnExtraWebSocket(service, ws, {
+        channel: AnyChannel
+      , loggerLevel: DelightRPCWebSocket.Level.Info
+      })
+      destructor.defer(closeRPCServer)
+
+      await ws.connect()
+      destructor.defer(() => ws.close())
     }
 
     await orchestrator.scale(concurrency)
 
     await waitForInput(
-      'Press q to terminate the orchestrator...'
+      'Press q to terminate consumers...'
     , key => key === 'q'
     )
     await orchestrator.terminate()

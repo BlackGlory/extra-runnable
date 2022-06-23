@@ -1,15 +1,15 @@
 import { IAPI } from '@src/types.js'
-import { Service } from '@rpc/service.js'
-import { startRPCServer } from '@rpc/start-rpc-server.js'
+import { API } from '@src/api.js'
+import { createRPCServerOnWebSocketServer } from '@utils/create-rpc-server.js'
+import * as DelightRPCExtraWebSocket from '@delight-rpc/extra-websocket'
 import { ExtraWebSocket } from 'extra-websocket'
-import { WebSocket } from 'ws'
+import { WebSocket, WebSocketServer } from 'ws'
 import { promisify } from 'extra-promise'
 import { createOrchestrator } from '@test/utils.js'
 import { OrchestratorState } from '@orchestrator/index.js'
-import * as DelightRPCExtraWebSocket from '@delight-rpc/extra-websocket'
 import ms from 'ms'
 
-describe('Service', () => {
+describe('API', () => {
   test('getId', async () => {
     const closeServer = startServer({ id: 'test-id' })
     const [client, closeClient] = await createClient()
@@ -135,10 +135,13 @@ function startServer(
   } = {}
 ): () => Promise<void> {
   const orchestrator = createOrchestrator()
-  const service = new Service(orchestrator, { id, label })
-  const server = startRPCServer(service, 8080)
-  const closeServer = promisify<void>(server.close).bind(server)
+  const service = new API(orchestrator, { id, label })
+  const wsServer = new WebSocketServer({ port: 8080 })
+  const closeRPCServer = createRPCServerOnWebSocketServer(service, wsServer)
+  const closeServer = promisify<void>(wsServer.close).bind(wsServer)
+
   return async () => {
+    closeRPCServer()
     await closeServer()
     if (
       orchestrator.getState() !== OrchestratorState.Terminating &&

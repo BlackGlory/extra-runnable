@@ -141,10 +141,9 @@ class RunnableConsumerFromModuleAsProcess<Params> implements RunnableConsumer<Pa
 }
 #+END_SRC
 
-*** RPC
-**** Service
+*** API
 #+BEGIN_SRC typescript
-class Service<Params> implements ImplementationOf<IAPI> {
+class API<Params> implements ImplementationOf<IAPI> {
   constructor(
     orchestrator: Orchestrator<Params>
   , options: {
@@ -153,42 +152,6 @@ class Service<Params> implements ImplementationOf<IAPI> {
     }
   )
 }
-#+END_SRC
-
-**** startRPCServer
-创建和开启WebSocket服务器.
-
-#+BEGIN_SRC typescript
-function startRPCServer(
-  service: ImplementationOf<IAPI>
-, port: number
-): WebSocketServer
-#+END_SRC
-
-**** connectRegistry
-#+BEGIN_SRC typescript
-function connectRegistry(
-  service: ImplementationOf<IAPI>
-, registry: string
-): () => Promise<void>
-#+END_SRC
-
-**** createRPCServerOnExtraWebSocket
-#+BEGIN_SRC typescript
-function createRPCServerOnExtraWebSocket(
-  service: ImplementationOf<IAPI>
-, ws: ExtraWebSocket
-, channel?: string
-): () => void
-#+END_SRC
-
-**** createRPCServerOnWebSocket
-#+BEGIN_SRC typescript
-function createRPCServerOnWebSocket(
-  service: ImplementationOf<IAPI>
-, ws: WebSocket
-, channel?: string
-): () => void
 #+END_SRC
 
 ** CLI
@@ -214,13 +177,13 @@ function createRPCServerOnWebSocket(
 该Orchestrator的并发数.
 
 当concurrency是一个字符串时, 支持以下格式:
-- `n`, 整数的字符串表示.
-- `max`, 最大逻辑核心数, 相当于 `100%` 和 `1/1`.
-- `half`, 一半逻辑核心数, 相当于 `50%` 和 `1/2`.
-- `-n`, 最大逻辑核心数减去n.
-- `n/m`, 按分数分配逻辑核心数.
-- `n%`, 按百分比分配逻辑核心数.
-除 `0`, `0/m`, `0%` 外, 其他非整数情况都会向上取整.
+- =n=, 整数的字符串表示.
+- =max=, 最大逻辑核心数, 相当于 =100%= 和 =1/1=.
+- =half=, 一半逻辑核心数, 相当于 =50%= 和 =1/2=.
+- =-n=, 最大逻辑核心数减去n.
+- =n/m=, 按分数分配逻辑核心数.
+- =n%=, 按百分比分配逻辑核心数.
+除 =0=, =0/m=, =0%= 外, 其他非整数情况都会向上取整.
 
 **** =--port <number>= (可选)
 端口号.

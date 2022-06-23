@@ -12,7 +12,7 @@
     "src/**/*.d.ts"
   ],
   "bin": {
-    "run-consumers": "src/cli.js"
+    "run-consumer-module": "src/cli.js"
   },
   "repository": "git@github.com:BlackGlory/consumer.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",

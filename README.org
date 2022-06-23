@@ -155,8 +155,8 @@ class API<Params> implements ImplementationOf<IAPI> {
 #+END_SRC
 
 ** CLI
-*** =run-consumers [...options] <filename>=
-以mode选项指定的适配器运行一个 =IConsumerModule<unknown>=.
+*** =run-consumer-module [...options] <filename>=
+将 =IConsumerModule<unknown>= 作为一个Orchestrator运行.
 
 **** =--id <string>= (可选, 默认为随机生成的UUID)
 该Orchestrator的id.
@@ -186,8 +186,8 @@ class API<Params> implements ImplementationOf<IAPI> {
 除 =0=, =0/m=, =0%= 外, 其他非整数情况都会向上取整.
 
 **** =--port <number>= (可选)
-端口号.
+RPC服务器的端口号.
 若提供此项, 则会开启RPC服务器.
 
 **** =--registry <url>= (可选)
-需要连接的registry的地址, 例如 =ws://localhost:8080=.
+需要连接的远程registry地址, 例如 =ws://localhost:8080=.

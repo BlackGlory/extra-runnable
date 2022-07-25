@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/BlackGlory/consumer/compare/v2.0.0...v2.0.1) (2022-07-25)
+
+
+### Bug Fixes
+
+* cli options ([5f4ccba](https://github.com/BlackGlory/consumer/commit/5f4ccba2236c0903e654812d96db5f5f04559039))
+
 ## [2.0.0](https://github.com/BlackGlory/consumer/compare/v1.0.0...v2.0.0) (2022-06-23)
 
 

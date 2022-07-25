@@ -158,10 +158,10 @@ class API<Params> implements ImplementationOf<IAPI> {
 *** =run-consumer-module [...options] <filename>=
 将 =IConsumerModule<unknown>= 作为一个Orchestrator运行.
 
-**** =--id <string>= (可选, 默认为随机生成的UUID)
+**** =--id [string]= (可选, 默认为随机生成的UUID)
 该Orchestrator的id.
 
-**** =--label <string>= (可选)
+**** =--label [string]= (可选)
 该Orchestrator的label.
 
 **** =--mode <string>= (可选, 默认为 =async=)

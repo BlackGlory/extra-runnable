@@ -31,7 +31,7 @@
     "dev": "ts-node -r tsconfig-paths/register src/cli.ts",
     "dev:debug": "node --inspect-brk node_modules/.bin/ts-node -r tsconfig-paths/register src/cli.ts",
     "prepublishOnly": "run-s clean prepare build bundle",
-    "clean": "rimraf 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
+    "clean": "rimraf dist 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
     "build": "tsc --project tsconfig.build.json",
     "bundle": "webpack --stats-error-details",
     "smoke": "node dist/cli.cjs --help",

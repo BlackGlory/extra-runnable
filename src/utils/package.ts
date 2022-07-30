@@ -3,7 +3,7 @@ import { readJSONFileSync, findUpPackageFilenameSync } from 'extra-filesystem'
 import { assert, isString } from '@blackglory/prelude'
 
 const pkgFilename = findUpPackageFilenameSync(
-  fileURLToPath(new URL('.', import.meta.url))
+  fileURLToPath(new URL(import.meta.url))
 )
 assert(pkgFilename, 'The package.json is not found')
 

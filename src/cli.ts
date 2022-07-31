@@ -46,7 +46,7 @@ interface IOptions {
 const debug = createDebug('cli')
 
 program
-  .name('run-consumers')
+  .name('run-consumer-module')
   .version(version)
   .description(description)
   .option('--id [id]')

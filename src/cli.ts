@@ -43,10 +43,13 @@ interface IOptions {
   registry?: string
 }
 
+const name = 'run-consumer-module'
+process.title = name
+
 const debug = createDebug('cli')
 
 program
-  .name('run-consumer-module')
+  .name(name)
   .version(version)
   .description(description)
   .option('--id [id]')
@@ -57,6 +60,8 @@ program
   .option('--registry [url]')
   .argument('<filename>')
   .action(async (filename: string) => {
+    process.title = `${name} ${filename}`
+
     const destructor = new Destructor()
     const taskFilename = path.resolve(process.cwd(), filename)
     const options = program.opts<IOptions>()

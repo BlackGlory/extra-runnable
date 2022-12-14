@@ -1,8 +1,7 @@
 import { Deferred } from 'extra-promise'
 import { IRunnable } from '@src/types.js'
 import { pass } from '@blackglory/prelude'
-import { FiniteStateMachine } from '@blackglory/structures'
-import { IFiniteStateMachineSchema } from '@blackglory/structures'
+import { FiniteStateMachine, IFiniteStateMachineSchema } from 'extra-fsm'
 
 type Event =
 | 'init'

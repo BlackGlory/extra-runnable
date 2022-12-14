@@ -1,4 +1,4 @@
-import { IFiniteStateMachineSchema } from '@blackglory/structures'
+import { IFiniteStateMachineSchema } from 'extra-fsm'
 
 export enum WorkerState {
   Idle = 'idle'

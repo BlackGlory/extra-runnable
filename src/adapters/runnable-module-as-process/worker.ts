@@ -1,7 +1,7 @@
 import { createServer } from '@delight-rpc/child-process'
 import { IAPI } from './types.js'
 import { WorkerState, workerSchema } from './fsm.js'
-import { FiniteStateMachine } from '@blackglory/structures'
+import { FiniteStateMachine } from 'extra-fsm'
 import { AbortController } from 'extra-abort'
 import { importModule } from '@adapters/utils.js'
 import { PrimitiveRunnableFunction } from '@adapters/types.js'

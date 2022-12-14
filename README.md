@@ -46,16 +46,16 @@ class Runner<Result, Args extends unknown[]> {
 }
 ```
 
-### PrimitiveRunnableFunction
+### RawRunnableFunction
 ```ts
-type PrimitiveRunnableFunction<Result, Args extends unknown[]> =
+type RawRunnableFunction<Result, Args extends unknown[]> =
   (signal: AbortSignal, ...args: Args) => Awaitable<Result>
 ```
 
 #### RunnableFunction
 ```ts
 class RunnbleFunction<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
-  constructor(fn: PrimitiveRunnableFunction)
+  constructor(fn: RawRunnableFunction)
 }
 ```
 
@@ -63,7 +63,7 @@ class RunnbleFunction<Result, Args extends unknown[]> implements IRunnable<Resul
 ```ts
 class RunnableModule<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
   /**
-   * @param filename export default as `PrimitiveRunnableFunction`
+   * @param filename export default as `RawRunnableFunction`
    */
   constructor(filename: string)
 }
@@ -73,7 +73,7 @@ class RunnableModule<Result, Args extends unknown[]> implements IRunnable<Result
 ```ts
 class RunnableModuleAsThread<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
   /**
-   * @param filename export default as `PrimitiveRunnableFunction`
+   * @param filename export default as `RawRunnableFunction`
    */
   constructor(filename: string)
 }
@@ -83,7 +83,7 @@ class RunnableModuleAsThread<Result, Args extends unknown[]> implements IRunnabl
 ```ts
 class RunnableModuleAsProcess<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
   /**
-   * @param filename export default as `PrimitiveRunnableFunction`
+   * @param filename export default as `RawRunnableFunction`
    */
   constructor(filename: string)
 }

@@ -15,7 +15,7 @@ export class RunnableModuleAsProcess<Result, Args extends unknown[]> implements 
   private cancelClient?: () => void
 
   /**
-   * @param filename export default as `PrimitiveRunnableFunction`
+   * @param filename export default as `RawRunnableFunction`
    */
   constructor(private filename: string) {}
 

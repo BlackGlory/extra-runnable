@@ -1,12 +1,12 @@
 import { IRunnable } from '@src/types.js'
-import { PrimitiveRunnableFunction } from '@adapters/types.js'
+import { RawRunnableFunction } from '@adapters/types.js'
 import { assert, pass, isntUndefined } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
 
 export class RunnableFunction<Result, Args extends unknown[]> implements IRunnable<Result, Args> {
   private controller?: AbortController
 
-  constructor(private fn: PrimitiveRunnableFunction<Result, Args>) {}
+  constructor(private fn: RawRunnableFunction<Result, Args>) {}
 
   init(): void {
     pass()

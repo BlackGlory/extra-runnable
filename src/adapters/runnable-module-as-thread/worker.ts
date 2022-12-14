@@ -6,7 +6,7 @@ import { FiniteStateMachine } from 'extra-fsm'
 import { assert } from '@blackglory/errors'
 import { AbortController } from 'extra-abort'
 import { importModule } from '@adapters/utils.js'
-import { PrimitiveRunnableFunction } from '@adapters/types.js'
+import { RawRunnableFunction } from '@adapters/types.js'
 import { bind } from 'extra-proxy'
 
 assert(!isMainThread, 'This worker should not be run on main thread')
@@ -15,7 +15,7 @@ assert(parentPort, 'This worker should be run on worker thread')
 class RunnableWorker {
   static fsm = new FiniteStateMachine(workerSchema, WorkerState.Idle)
   static controller: AbortController
-  static fn: PrimitiveRunnableFunction<unknown, unknown[]>
+  static fn: RawRunnableFunction<unknown, unknown[]>
 
   static async init(filename: string): Promise<void> {
     this.fn = await importModule(filename)

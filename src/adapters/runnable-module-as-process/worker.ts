@@ -4,13 +4,13 @@ import { WorkerState, workerSchema } from './fsm.js'
 import { FiniteStateMachine } from 'extra-fsm'
 import { AbortController } from 'extra-abort'
 import { importModule } from '@adapters/utils.js'
-import { PrimitiveRunnableFunction } from '@adapters/types.js'
+import { RawRunnableFunction } from '@adapters/types.js'
 import { bind } from 'extra-proxy'
 
 class RunnableWorker {
   static fsm = new FiniteStateMachine(workerSchema, WorkerState.Idle)
   static controller: AbortController
-  static fn: PrimitiveRunnableFunction<unknown, unknown[]>
+  static fn: RawRunnableFunction<unknown, unknown[]>
 
   static async init(filename: string): Promise<void> {
     this.fn = await importModule(filename)

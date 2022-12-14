@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/BlackGlory/extra-runnable/compare/v3.0.1...v4.0.0) (2022-12-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Renamed `PrimitiveRunnableFunction` to `RawRunnableFunction`
+* The minimal version of Node.js is 16
+
+* rename `PrimitiveRunnableFunction` to `RawRunnableFunction` ([28e1fb1](https://github.com/BlackGlory/extra-runnable/commit/28e1fb1c6c030f07ff7fa42b88fc4b99d1dc6254))
+* upgrade dependencies ([ac1400f](https://github.com/BlackGlory/extra-runnable/commit/ac1400f042a71680e72f5882ad5a2d9fd8c47fc8))
+
 ### [3.0.1](https://github.com/BlackGlory/extra-runnable/compare/v3.0.0...v3.0.1) (2022-06-12)
 
 ## [3.0.0](https://github.com/BlackGlory/extra-runnable/compare/v2.0.0...v3.0.0) (2022-06-12)

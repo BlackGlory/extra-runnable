@@ -1,6 +1,6 @@
 {
   "name": "extra-runnable",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "The Runnable and Runner in JavaScript/Typescript.",
   "keywords": [],
   "type": "module",

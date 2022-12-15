@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/BlackGlory/extra-runnable/compare/v4.0.0...v5.0.0) (2022-12-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed RawRunnableFunction, RunnableFunction, RunnableModule,
+        RunnableModuleAsThread, RunnableModuleAsProcess
+
+* remove implementations ([22d46c6](https://github.com/BlackGlory/extra-runnable/commit/22d46c6fad8ea006f7e7cdd4eb766cd9b0e1e587))
+
 ## [4.0.0](https://github.com/BlackGlory/extra-runnable/compare/v3.0.1...v4.0.0) (2022-12-14)
 
 

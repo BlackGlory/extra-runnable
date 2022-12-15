@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals'
 import { Runner, RunnerState } from '@src/runner.js'
-import { IRunnable } from '@src/types.js'
+import { IRunnable } from '@src/runnable.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
 import { delay } from 'extra-promise'

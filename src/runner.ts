@@ -1,5 +1,5 @@
 import { Deferred } from 'extra-promise'
-import { IRunnable } from '@src/types.js'
+import { IRunnable } from './runnable.js'
 import { pass } from '@blackglory/prelude'
 import { FiniteStateMachine, IFiniteStateMachineSchema } from 'extra-fsm'
 

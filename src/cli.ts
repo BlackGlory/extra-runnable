@@ -52,12 +52,12 @@ program
   .name(name)
   .version(version)
   .description(description)
-  .option('--id [id]')
-  .option('--label [label]')
-  .option('--mode [mode]', '', 'async')
-  .option('--concurrency [concurrency]', '', '1')
-  .option('--port [port]')
-  .option('--registry [url]')
+  .option('--id <id>')
+  .option('--label <label>')
+  .option('--mode <mode>', '', 'async')
+  .option('--concurrency <concurrency>', '', '1')
+  .option('--port <port>')
+  .option('--registry <url>')
   .argument('<filename>')
   .action(async (filename: string) => {
     process.title = `${name} ${filename}`

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://github.com/BlackGlory/consumer/compare/v3.0.0...v3.0.1) (2023-01-28)
+
+
+### Bug Fixes
+
+* remove bundle because webpack does not support esm output ([77fc3dc](https://github.com/BlackGlory/consumer/commit/77fc3dc36b93d20203885011e4359998f948d0cf))
+
 ## [3.0.0](https://github.com/BlackGlory/consumer/compare/v2.1.2...v3.0.0) (2023-01-28)
 
 

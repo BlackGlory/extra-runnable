@@ -7,7 +7,7 @@ npm install @blackglory/consumer
 yarn add @blackglory/consumer
 
 # Install as a CLI program
-npm install -g @blackglory/consumer
+npm install --global @blackglory/consumer
 # or
 yarn global add @blackglory/consumer
 #+END_SRC

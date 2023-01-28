@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/BlackGlory/consumer/compare/v2.1.2...v3.0.0) (2023-01-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* The minimal version of Node.js is 16
+
+### Bug Fixes
+
+* option types ([634c0fd](https://github.com/BlackGlory/consumer/commit/634c0fd0e22d9fc145d1239218a852e083389a06))
+
+
+* upgrade dependencies ([b8d259c](https://github.com/BlackGlory/consumer/commit/b8d259c8a77a179e879300b13723c1d8da1e5c01))
+
 ### [2.1.2](https://github.com/BlackGlory/consumer/compare/v2.1.1...v2.1.2) (2022-08-01)
 
 ### [2.1.1](https://github.com/BlackGlory/consumer/compare/v2.1.0...v2.1.1) (2022-08-01)

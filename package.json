@@ -4,13 +4,11 @@
   "description": "The Runnable and Runner in JavaScript/Typescript.",
   "keywords": [],
   "type": "module",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "sideEffects": true,
   "files": [
-    "src/**/*.js",
-    "src/**/*.js.map",
-    "src/**/*.d.ts"
+    "lib"
   ],
   "repository": "git@github.com:BlackGlory/extra-runnable.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
@@ -24,7 +22,7 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand --config jest.config.js",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand --coverage --config jest.config.js",
     "prepublishOnly": "run-s prepare clean build",
-    "clean": "rimraf 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
+    "clean": "rimraf lib",
     "build": "tsc --project tsconfig.build.json",
     "release": "standard-version"
   },

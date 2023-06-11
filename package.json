@@ -8,7 +8,8 @@
   "types": "lib/index.d.ts",
   "sideEffects": true,
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "repository": "git@github.com:BlackGlory/extra-runnable.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",

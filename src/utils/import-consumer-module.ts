@@ -16,7 +16,7 @@ export async function importConsumerModule<Params>(filename: string): Promise<IC
     }
   }
 
-  // export default function() {}
+  // export default function () {}
   if (
     (isFunction(module.init) || isUndefined(module.init)) &&
     (isFunction(module.final) || isUndefined(module.final)) &&
@@ -28,7 +28,7 @@ export async function importConsumerModule<Params>(filename: string): Promise<IC
     }
   }
 
-  // exports.default = function() {}
+  // exports.default = function () {}
   if (
     (isFunction(module.default.init) || isUndefined(module.default.init)) &&
     (isFunction(module.default.final) || isUndefined(module.default.final)) &&

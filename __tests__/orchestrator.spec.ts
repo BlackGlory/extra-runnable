@@ -1,8 +1,8 @@
+import { describe, test, expect, vi } from 'vitest'
 import { OrchestratorState } from '@orchestrator/index.js'
 import { createOrchestrator } from '@test/utils.js'
 import { pass } from '@blackglory/prelude'
 import { delay } from 'extra-promise'
-import { jest } from '@jest/globals'
 
 describe('Orchestrator', () => {
   describe('getState', () => {
@@ -27,14 +27,14 @@ describe('Orchestrator', () => {
 
   describe('scale', () => {
     test('upscale', async () => {
-      const initTask = jest.fn(pass)
-      const runTask = jest.fn(async (signal: AbortSignal) => {
+      const initTask = vi.fn(pass)
+      const runTask = vi.fn(async (signal: AbortSignal) => {
         while (!signal.aborted) {
           await delay(100)
         }
       })
-      const abortTask = jest.fn(pass)
-      const destroyTask = jest.fn(pass)
+      const abortTask = vi.fn(pass)
+      const destroyTask = vi.fn(pass)
       const orchestrator = createOrchestrator({
         initTask
       , runTask
@@ -61,14 +61,14 @@ describe('Orchestrator', () => {
     })
 
     test('downscale', async () => {
-      const initTask = jest.fn(pass)
-      const runTask = jest.fn(async signal => {
+      const initTask = vi.fn(pass)
+      const runTask = vi.fn(async signal => {
         while (!signal.aborted) {
           await delay(100)
         }
       })
-      const abortTask = jest.fn(pass)
-      const destroyTask = jest.fn(pass)
+      const abortTask = vi.fn(pass)
+      const destroyTask = vi.fn(pass)
       const orchestrator = createOrchestrator({
         initTask
       , runTask
@@ -100,19 +100,19 @@ describe('Orchestrator', () => {
   describe('event', () => {
     test('error', async () => {
       const customError = new Error('custom error')
-      const initTask = jest.fn(pass)
-      const runTask = jest.fn(() => {
+      const initTask = vi.fn(pass)
+      const runTask = vi.fn(() => {
         throw customError
       })
-      const abortTask = jest.fn(pass)
-      const destroyTask = jest.fn(pass)
+      const abortTask = vi.fn(pass)
+      const destroyTask = vi.fn(pass)
       const orchestrator = createOrchestrator({
         initTask
       , runTask
       , abortTask
       , destroyTask
       })
-      const errorListener = jest.fn()
+      const errorListener = vi.fn()
 
       try {
         orchestrator.on('error', errorListener)
@@ -128,7 +128,7 @@ describe('Orchestrator', () => {
 
     test('terminated', async () => {
       const orchestrator = createOrchestrator()
-      const terminatedListener = jest.fn()
+      const terminatedListener = vi.fn()
 
       orchestrator.on('terminated', terminatedListener)
       await orchestrator.terminate()

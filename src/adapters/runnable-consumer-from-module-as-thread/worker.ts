@@ -7,7 +7,6 @@ import { assert } from '@blackglory/errors'
 import { AbortController } from 'extra-abort'
 import { importConsumerModule } from '@utils/import-consumer-module.js'
 import { Consumer } from '@src/types.js'
-import { bind } from 'extra-proxy'
 
 assert(!isMainThread, 'This worker should not be run on main thread')
 assert(parentPort, 'This worker should be run on worker thread')

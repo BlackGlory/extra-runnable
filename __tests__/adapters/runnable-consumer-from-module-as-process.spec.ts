@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest'
 import { RunnableConsumerFromModuleAsProcess } from '@adapters/runnable-consumer-from-module-as-process/index.js'
 import { getErrorPromise } from 'return-style'
 import { getFixturePath } from '@test/adapters/utils.js'

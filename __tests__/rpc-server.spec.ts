@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest'
 import { IAPI } from '@src/types.js'
 import { API } from '@src/api.js'
 import { createRPCServerOnWebSocketServer } from '@utils/create-rpc-server.js'

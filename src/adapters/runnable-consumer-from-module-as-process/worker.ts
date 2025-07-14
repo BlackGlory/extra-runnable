@@ -5,7 +5,6 @@ import { FiniteStateMachine } from 'extra-fsm'
 import { AbortController } from 'extra-abort'
 import { importConsumerModule } from '@utils/import-consumer-module.js'
 import { Consumer } from '@src/types.js'
-import { bind } from 'extra-proxy'
 
 class Worker {
   static fsm = new FiniteStateMachine(workerSchema, WorkerState.Idle)

@@ -1,6 +1,6 @@
-* @blackglory/consumer
-** Install
-#+BEGIN_SRC sh
+# @blackglory/consumer
+## Install
+```sh
 # Install as a library
 npm install @blackglory/consumer
 # or
@@ -10,20 +10,20 @@ yarn add @blackglory/consumer
 npm install --global @blackglory/consumer
 # or
 yarn global add @blackglory/consumer
-#+END_SRC
+```
 
-** API
-#+BEGIN_SRC typescript
+## API
+```typescript
 import { Runner, IRunnable } from 'extra-runnable'
-  
+
 type RunnableConsumer<Params> = IRunnable<void, [Params]>
-  
+
 type RunnableConsumerFactory<Params> =
   () => Awaitable<RunnableConsumer<Params>>
-  
+
 type Consumer<Params> =
   (signal: AbortSignal, params: Params) => Awaitable<void>
-  
+
 interface IConsumerModule<Params> {
    /**
    * 被执行的消费者本身.
@@ -54,7 +54,7 @@ interface IConsumerModule<Params> {
    */
   final?: (error?: Error) => Awaitable<void>
 }
-  
+
 interface IAPI {
   getId(): string
   setLabel(val: string): null
@@ -79,11 +79,11 @@ interface IAPI {
 
   terminate(): null
 }
-#+END_SRC
+```
 
-*** Orchestrator
-#+BEGIN_SRC typescript
-export class Orchestrator<Params> extends Emitter<{
+### Orchestrator
+```typescript
+class Orchestrator<Params> extends Emitter<{
   terminated: []
 
   /**
@@ -101,48 +101,48 @@ export class Orchestrator<Params> extends Emitter<{
   terminate(): Promise<void>
   scale(target: number): Promise<void>
 }
-#+END_SRC
+```
 
-*** Adapters
-**** RunnableConsumerFromFunction
-#+BEGIN_SRC typescript
+### Adapters
+#### RunnableConsumerFromFunction
+```typescript
 class RunnableConsumerFromFunction<Params> implements RunnableConsumer<Params> {
   constructor(fn: Consumer<Params>)
 }
-#+END_SRC
+```
 
-**** RunnableConsumerFromModule
-#+BEGIN_SRC typescript
+#### RunnableConsumerFromModule
+```typescript
 class RunnableConsumerFromModule<Params> implements RunnableConsumer<Params> {
   /**
    * @param filename export `IConsumerModule<Params>`
    */
   constructor(filename: string)
 }
-#+END_SRC
+```
 
-**** RunnableConsumerFromModuleAsThread
-#+BEGIN_SRC typescript
+#### RunnableConsumerFromModuleAsThread
+```typescript
 class RunnableConsumerFromModuleAsThread<Params> implements RunnableConsumer<Params> {
   /**
    * @param filename export `IConsumerModule<Params>`
    */
   constructor(filename: string)
 }
-#+END_SRC
+```
 
-**** RunnableConsumerFromModuleAsProcess
-#+BEGIN_SRC typescript
+#### RunnableConsumerFromModuleAsProcess
+```typescript
 class RunnableConsumerFromModuleAsProcess<Params> implements RunnableConsumer<Params> {
   /**
    * @param filename export `IConsumerModule<Params>`
    */
   constructor(filename: string)
 }
-#+END_SRC
+```
 
-*** API
-#+BEGIN_SRC typescript
+### API
+```typescript
 class API<Params> implements ImplementationOf<IAPI> {
   constructor(
     orchestrator: Orchestrator<Params>
@@ -152,13 +152,13 @@ class API<Params> implements ImplementationOf<IAPI> {
     }
   )
 }
-#+END_SRC
+```
 
-** CLI
-*** =run-consumer-module [...options] <filename>=
-将 =IConsumerModule<unknown>= 作为一个Orchestrator运行.
+## CLI
+### `run-consumer-module [...options] <filename>`
+将`IConsumerModule<unknown>`作为一个Orchestrator运行.
 
-#+BEGIN_SRC
+```
 Usage: run-consumer-module [options] <filename>
 
 Options:
@@ -170,38 +170,38 @@ Options:
   --port <port>
   --registry <url>
   -h, --help                   display help for command
-#+END_SRC
+```
 
-**** =--id [string]= (可选, 默认为随机生成的UUID)
+#### `--id [string]` (可选, 默认为随机生成的UUID)
 该Orchestrator的id.
 
-**** =--label [string]= (可选)
+#### `--label [string]` (可选)
 该Orchestrator的label.
 
-**** =--mode <string>= (可选, 默认为 =async=)
-- =async=: 适用于I/O密集型的任务, 如果脚本包含CPU密集型代码, 则会导致阻塞.
-- =thread=: 适用于CPU密集型的任务, 采用线程模型, 使用worker_threads模块.
+#### `--mode <string>` (可选, 默认为`async`)
+- `async`: 适用于I/O密集型的任务, 如果脚本包含CPU密集型代码, 则会导致阻塞.
+- `thread`: 适用于CPU密集型的任务, 采用线程模型, 使用worker_threads模块.
   init函数的返回值必须是可序列化的.
-- =process=: 适用于CPU密集型的任务, 采用进程模型, 使用child_process模块.
+- `process`: 适用于CPU密集型的任务, 采用进程模型, 使用child_process模块.
   init函数的返回值必须是可序列化的.
   该模式是为了弥补thread模式下Worker无法使用部分Native模块的不足而出现的.
   由于thread模式的资源开销更小, 应优先使用thread模式.
 
-**** =--concurrency <number | string>= concurrency(可选, 默认为1)
+#### `--concurrency <number | string>` (可选, 默认为1)
 该Orchestrator的并发数.
 
 当concurrency是一个字符串时, 支持以下格式:
-- =n=, 整数的字符串表示.
-- =max=, 最大逻辑核心数, 相当于 =100%= 和 =1/1=.
-- =half=, 一半逻辑核心数, 相当于 =50%= 和 =1/2=.
-- =-n=, 最大逻辑核心数减去n.
-- =n/m=, 按分数分配逻辑核心数.
-- =n%=, 按百分比分配逻辑核心数.
-除 =0=, =0/m=, =0%= 外, 其他非整数情况都会向上取整.
+- `n`, 整数的字符串表示.
+- `max`, 最大逻辑核心数, 相当于`100%`和`1/1`.
+- `half`, 一半逻辑核心数, 相当于`50%`和`1/2`.
+- `-n`, 最大逻辑核心数减去n.
+- `n/m`, 按分数分配逻辑核心数.
+- `n%`, 按百分比分配逻辑核心数.
+除`0`, `0/m`, `0%` 外, 其他非整数情况都会向上取整.
 
-**** =--port <number>= (可选)
+#### `--port <number>` (可选)
 RPC服务器的端口号.
 若提供此项, 则会开启RPC服务器.
 
-**** =--registry <url>= (可选)
-需要连接的远程registry地址, 例如 =ws://localhost:8080=.
+#### `--registry <url>` (可选)
+需要连接的远程registry地址, 例如`ws://localhost:8080`.

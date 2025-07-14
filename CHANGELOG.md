@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/BlackGlory/consumer/compare/v3.0.1...v4.0.0) (2025-07-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed support for registry, rpc, cli
+* Node.js v16 => v22
+
+### Features
+
+* remove support for registry, rpc, cli ([f30683e](https://github.com/BlackGlory/consumer/commit/f30683e3f7a41430a426cb1f03318d5b2499ce33))
+
+
+* upgrade dependencies ([f5e89bc](https://github.com/BlackGlory/consumer/commit/f5e89bc5b3d11b96717b9ea29468beadd39270d6))
+
 ### [3.0.1](https://github.com/BlackGlory/consumer/compare/v3.0.0...v3.0.1) (2023-01-28)
 
 

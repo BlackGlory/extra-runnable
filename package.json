@@ -9,15 +9,9 @@
   "files": [
     "src"
   ],
-  "bin": {
-    "run-consumer-module": "src/cli.js"
-  },
   "repository": "git@github.com:BlackGlory/consumer.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",
-  "sideEffects": [
-    "src/cli.js"
-  ],
   "engines": {
     "node": ">=22"
   },
@@ -25,17 +19,14 @@
     "prepare": "ts-patch install -s",
     "lint": "eslint --quiet src __tests__",
     "test": "vitest run",
-    "dev": "ts-node -r tsconfig-paths/register src/cli.ts",
-    "dev:debug": "node --inspect-brk node_modules/.bin/ts-node -r tsconfig-paths/register src/cli.ts",
     "prepublishOnly": "run-s clean prepare build",
-    "clean": "rimraf 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
+    "clean": "rimraf --glob 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
     "build": "tsc --project tsconfig.build.json",
-    "smoke": "node src/cli.js --help",
     "release": "standard-version"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "run-s clean prepare lint build test smoke clean",
+      "pre-commit": "run-s clean prepare lint build test clean",
       "commit-msg": "commitlint --config commitlint.config.cjs --env HUSKY_GIT_PARAMS"
     }
   },
@@ -46,7 +37,6 @@
     "@types/debug": "^4.1.12",
     "@types/log-process-errors": "^9.1.0",
     "@types/node": "22",
-    "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "@typescript-eslint/parser": "^8.36.0",
     "cross-env": "^7.0.3",
@@ -70,27 +60,15 @@
     "@blackglory/structures": "^0.14.10",
     "@blackglory/wait-for": "^0.8.1",
     "@delight-rpc/child-process": "^0.6.2",
-    "@delight-rpc/extra-websocket": "^0.7.0",
-    "@delight-rpc/websocket": "^0.7.4",
     "@delight-rpc/worker-threads": "^6.0.1",
-    "bufferutil": "^4.0.9",
-    "commander": "^14.0.0",
     "delight-rpc": "^6.1.2",
     "extra-abort": "^0.4.0",
     "extra-filesystem": "^0.5.2",
     "extra-fsm": "^0.2.1",
     "extra-promise": "^7.0.0",
-    "extra-prompts": "^0.3.0",
-    "extra-proxy": "^0.4.1",
     "extra-runnable": "^5.0.2",
     "extra-timers": "^0.2.6",
-    "extra-websocket": "^0.4.2",
     "hardware-concurrency": "^0.1.4",
-    "iterable-operator": "^5.1.0",
-    "nanoid": "^5.1.5",
-    "tsconfig-paths": "^4.2.0",
-    "utf-8-validate": "^6.0.5",
-    "ws": "^8.18.3",
-    "you-died": "^0.4.5"
+    "iterable-operator": "^5.1.0"
   }
 }

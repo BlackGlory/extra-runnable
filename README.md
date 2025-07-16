@@ -39,9 +39,10 @@ class Runner<Result, Args extends unknown[]> {
   constructor(runnable: IRunnable<Result, Args>)
 
   getState(): RunnableState
-  async init(): Promise<void>
-  async run(...args: Args): Promise<Result>
-  async abort(): Promise<void>
-  async destroy(): Promise<void>
+
+  init(): Promise<void>
+  run(...args: Args): Promise<Result>
+  abort(): Promise<void>
+  destroy(): Promise<void>
 }
 ```

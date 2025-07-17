@@ -338,5 +338,5 @@ function createRunnable() {
   , destroy: vi.fn()
   , init: vi.fn()
   , run: vi.fn()
-  } satisfies IRunnable<unknown, unknown[]>
+  } satisfies IRunnable<unknown[], unknown>
 }

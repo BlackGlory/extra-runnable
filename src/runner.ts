@@ -72,11 +72,11 @@ const schema: IFiniteStateMachineSchema<RunnerState, Event> = {
 , [RunnerState.Destroyed]: {}
 }
 
-export class Runner<Result, Args extends unknown[]> {
+export class Runner<Args extends unknown[], Result> {
   private task?: Deferred<void>
   private fsm = new FiniteStateMachine(schema, RunnerState.Created)
 
-  constructor(private adapter: IRunnable<Result, Args>) {}
+  constructor(private adapter: IRunnable<Args, Result>) {}
 
   getState(): RunnerState {
     return this.fsm.state

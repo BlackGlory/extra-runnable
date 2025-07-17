@@ -11,7 +11,7 @@ yarn add extra-runnable
 ## API
 ### IRunnable
 ```ts
-interface IRunnable<Result, Args extends unknown[]> {
+interface IRunnable<Args extends unknown[], Result> {
   init(): Awaitable<void>
   run(...args: Args): Awaitable<Result>
   abort(): Awaitable<void>
@@ -35,7 +35,7 @@ enum RunnerState {
 , Destroyed = 'destroyed'
 }
 
-class Runner<Result, Args extends unknown[]> {
+class Runner<Args extends unknown[], Result> {
   constructor(runnable: IRunnable<Result, Args>)
 
   getState(): RunnableState

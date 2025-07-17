@@ -1,10 +1,9 @@
-import { jest } from '@jest/globals'
+import { describe, test, expect, vi } from 'vitest'
 import { Runner, RunnerState } from '@src/runner.js'
 import { IRunnable } from '@src/runnable.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
 import { delay } from 'extra-promise'
-import { mocked } from 'jest-mock'
 import { AbortController } from 'extra-abort'
 
 describe('Runner', () => {
@@ -33,7 +32,7 @@ describe('Runner', () => {
     test('state should be crashed', async () => {
       const runnable = createRunnable()
       const error = new Error('custom error')
-      mocked(runnable.init).mockImplementation(() => {
+      runnable.init.mockImplementation(() => {
         throw error
       })
       const task = new Runner(runnable)
@@ -49,7 +48,7 @@ describe('Runner', () => {
     test('reinitialize', async () => {
       const runnable = createRunnable()
       const error = new Error('custom error')
-      mocked(runnable.init).mockImplementationOnce(() => {
+      runnable.init.mockImplementationOnce(() => {
         throw error
       })
       const task = new Runner(runnable)
@@ -69,7 +68,7 @@ describe('Runner', () => {
     test('state should be running', async () => {
       const controller = new AbortController()
       const runnable = createRunnable()
-      mocked(runnable.run).mockImplementation(async () => {
+      runnable.run.mockImplementation(async () => {
         while (true) {
           await delay(100)
           if (controller.signal.aborted) break
@@ -92,7 +91,7 @@ describe('Runner', () => {
 
     test('state should be completed', async () => {
       const runnable = createRunnable()
-      mocked(runnable.run).mockImplementation(() => 'result')
+      runnable.run.mockImplementation(() => 'result')
       const task = new Runner(runnable)
       await task.init()
 
@@ -107,7 +106,7 @@ describe('Runner', () => {
     test('state should be error', async () => {
       const runnable = createRunnable()
       const error = new Error('custom error')
-      mocked(runnable.run).mockImplementation(() => {
+      runnable.run.mockImplementation(() => {
         throw error
       })
       const task = new Runner(runnable)
@@ -126,13 +125,13 @@ describe('Runner', () => {
     test('state should be stopping', async () => {
       const controller = new AbortController()
       const runnable = createRunnable()
-      mocked(runnable.run).mockImplementation(async () => {
+      runnable.run.mockImplementation(async () => {
         while (true) {
           await delay(100)
           if (controller.signal.aborted) break
         }
       })
-      mocked(runnable.abort).mockImplementation(() => controller.abort())
+      runnable.abort.mockImplementation(() => controller.abort())
       const task = new Runner(runnable)
       await task.init()
 
@@ -147,13 +146,13 @@ describe('Runner', () => {
     test('state should be stopped', async () => {
       const runnable = createRunnable()
       const controller = new AbortController()
-      mocked(runnable.run).mockImplementation(async () => {
+      runnable.run.mockImplementation(async () => {
         while (true) {
           await delay(100)
           if (controller.signal.aborted) break
         }
       })
-      mocked(runnable.abort).mockImplementation(() => controller.abort())
+      runnable.abort.mockImplementation(() => controller.abort())
       const task = new Runner(runnable)
       await task.init()
 
@@ -169,13 +168,13 @@ describe('Runner', () => {
       test('state should be stopped', async () => {
         const runnable = createRunnable()
         const controller = new AbortController()
-        mocked(runnable.run).mockImplementation(async () => {
+        runnable.run.mockImplementation(async () => {
           while (true) {
             await delay(100)
             if (controller.signal.aborted) throw new Error('custom error')
           }
         })
-        mocked(runnable.abort).mockImplementation(() => controller.abort())
+        runnable.abort.mockImplementation(() => controller.abort())
         const task = new Runner(runnable)
         await task.init()
 
@@ -192,14 +191,14 @@ describe('Runner', () => {
       test('state should be stopping', async () => {
         const runnable = createRunnable()
         const controller = new AbortController()
-        mocked(runnable.run).mockImplementation(async () => {
+        runnable.run.mockImplementation(async () => {
           while (true) {
             await delay(100)
             if (controller.signal.aborted) break
           }
         })
         const error = new Error('custom error')
-        mocked(runnable.abort).mockImplementation(() => {
+        runnable.abort.mockImplementation(() => {
           throw error
         })
         const task = new Runner(runnable)
@@ -222,14 +221,14 @@ describe('Runner', () => {
         test('state should be stopping', async () => {
           const runnable = createRunnable()
           const controller = new AbortController()
-          mocked(runnable.run).mockImplementation(async () => {
+          runnable.run.mockImplementation(async () => {
             while (true) {
               await delay(100)
               if (controller.signal.aborted) break
             }
           })
           const error = new Error('custom error')
-          mocked(runnable.abort).mockImplementation(() => {
+          runnable.abort.mockImplementation(() => {
             throw error
           })
           const task = new Runner(runnable)
@@ -257,14 +256,14 @@ describe('Runner', () => {
     test('from stopped', async () => {
       const runnable = createRunnable()
       let controller: AbortController
-      mocked(runnable.run).mockImplementation(async () => {
+      runnable.run.mockImplementation(async () => {
         controller = new AbortController()
         while (true) {
           await delay(100)
           if (controller.signal.aborted) break
         }
       })
-      mocked(runnable.abort).mockImplementation(() => {
+      runnable.abort.mockImplementation(() => {
         controller.abort()
       })
       const task = new Runner(runnable)
@@ -286,7 +285,7 @@ describe('Runner', () => {
 
     test('from completed', async () => {
       const runnable = createRunnable()
-      mocked(runnable.run).mockImplementation((text: string) => {
+      runnable.run.mockImplementation((text: string) => {
         return text
       })
       const task = new Runner(runnable)
@@ -305,7 +304,7 @@ describe('Runner', () => {
     test('from error', async () => {
       const runnable = createRunnable()
       const error = new Error('custom error')
-      mocked(runnable.run).mockImplementation(() => {
+      runnable.run.mockImplementation(() => {
         throw error
       })
       const task = new Runner(runnable)
@@ -333,11 +332,11 @@ describe('Runner', () => {
   })
 })
 
-function createRunnable(): IRunnable<unknown, unknown[]> {
+function createRunnable() {
   return {
-    abort: jest.fn()
-  , destroy: jest.fn()
-  , init: jest.fn()
-  , run: jest.fn()
-  } as IRunnable<unknown, unknown[]>
+    abort: vi.fn()
+  , destroy: vi.fn()
+  , init: vi.fn()
+  , run: vi.fn()
+  } satisfies IRunnable<unknown, unknown[]>
 }

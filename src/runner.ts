@@ -1,7 +1,7 @@
 import { Deferred } from 'extra-promise'
-import { IRunnable } from './runnable.js'
 import { pass } from '@blackglory/prelude'
 import { FiniteStateMachine, IFiniteStateMachineSchema } from 'extra-fsm'
+import { IRunnable } from './runnable.js'
 
 type Event =
 | 'init'
@@ -71,7 +71,6 @@ const schema: IFiniteStateMachineSchema<RunnerState, Event> = {
   }
 , [RunnerState.Destroyed]: {}
 }
-
 
 export class Runner<Result, Args extends unknown[]> {
   private task?: Deferred<void>

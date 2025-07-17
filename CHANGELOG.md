@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0](https://github.com/BlackGlory/extra-runnable/compare/v5.0.2...v6.0.0) (2025-07-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* Swapped the positions of generic `Args` and `Result`
+* Node.js v16 => v22
+
+### Features
+
+* swap the positions of generic `Args` and `Result` ([1c10d5a](https://github.com/BlackGlory/extra-runnable/commit/1c10d5aaada56eed8f4d7dd894df0d1ffc4c509a))
+
+
+* upgrade dependencies ([ecee603](https://github.com/BlackGlory/extra-runnable/commit/ecee6032becfb39eea0ad441713117683b707783))
+
 ### [5.0.2](https://github.com/BlackGlory/extra-runnable/compare/v5.0.1...v5.0.2) (2023-06-11)
 
 

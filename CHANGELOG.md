@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.1.0](https://github.com/BlackGlory/extra-runnable/compare/v6.0.0...v6.1.0) (2025-08-11)
+
+
+### Features
+
+* add `RunnableFunction`, `RunnableModule`, `RunnableThread`, `RunnableProcess` ([22a0fc1](https://github.com/BlackGlory/extra-runnable/commit/22a0fc162c77cdd1f9a8e50270527d94948e1c4f))
+
 ## [6.0.0](https://github.com/BlackGlory/extra-runnable/compare/v5.0.2...v6.0.0) (2025-07-17)
 
 

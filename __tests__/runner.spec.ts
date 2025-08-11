@@ -1,10 +1,10 @@
 import { describe, test, expect, vi } from 'vitest'
-import { Runner, RunnerState } from '@src/runner.js'
-import { IRunnable } from '@src/runnable.js'
 import { getErrorPromise } from 'return-style'
 import { pass } from '@blackglory/pass'
 import { delay } from 'extra-promise'
 import { AbortController } from 'extra-abort'
+import { Runner, RunnerState } from '@src/runner.js'
+import { IRunnable } from '@src/types.js'
 
 describe('Runner', () => {
   describe('create instance', () => {

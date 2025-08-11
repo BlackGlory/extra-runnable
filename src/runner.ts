@@ -1,7 +1,7 @@
 import { Deferred } from 'extra-promise'
 import { pass } from '@blackglory/prelude'
 import { FiniteStateMachine, IFiniteStateMachineSchema } from 'extra-fsm'
-import { IRunnable } from './runnable.js'
+import { IRunnable } from './types.js'
 
 type Event =
 | 'init'
@@ -76,7 +76,7 @@ export class Runner<Args extends unknown[], Result> {
   private task?: Deferred<void>
   private fsm = new FiniteStateMachine(schema, RunnerState.Created)
 
-  constructor(private adapter: IRunnable<Args, Result>) {}
+  constructor(private runnable: IRunnable<Args, Result>) {}
 
   getState(): RunnerState {
     return this.fsm.state
@@ -84,11 +84,13 @@ export class Runner<Args extends unknown[], Result> {
 
   async init(): Promise<void> {
     this.fsm.send('init')
+
     try {
-      await this.adapter.init()
+      await this.runnable.init()
       this.fsm.send('inited')
     } catch (e) {
       this.fsm.send('crash')
+
       throw e
     }
   }
@@ -96,11 +98,12 @@ export class Runner<Args extends unknown[], Result> {
   async run(...args: Args): Promise<Result> {
     this.fsm.send('start')
 
-    this.task = new Deferred<void>()
-    Promise.resolve(this.task).catch(pass)
+    const task = new Deferred<void>()
+    Promise.resolve(task).catch(pass)
+    this.task = task
 
     try {
-      const promise = this.adapter.run(...args)
+      const promise = this.runnable.run(...args)
       this.fsm.send('started')
       const result = await promise
 
@@ -109,7 +112,9 @@ export class Runner<Args extends unknown[], Result> {
       } else {
         this.fsm.send('complete')
       }
-      this.task.resolve()
+
+      task.resolve()
+
       return result
     } catch (e) {
       if (this.fsm.matches(RunnerState.Stopping)) {
@@ -117,7 +122,9 @@ export class Runner<Args extends unknown[], Result> {
       } else {
         this.fsm.send('error')
       }
-      this.task?.reject(e)
+
+      task?.reject(e)
+
       throw e
     }
   }
@@ -125,7 +132,7 @@ export class Runner<Args extends unknown[], Result> {
   async abort(): Promise<void> {
     this.fsm.send('stop')
 
-    await this.adapter.abort()
+    await this.runnable.abort()
     try {
       await this.task
     } catch {
@@ -136,8 +143,8 @@ export class Runner<Args extends unknown[], Result> {
   async destroy(): Promise<void> {
     this.fsm.send('destroy')
 
-    await this.adapter.destroy()
+    await this.runnable.destroy()
 
-    delete this.task
+    this.task = undefined
   }
 }

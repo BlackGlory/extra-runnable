@@ -4,11 +4,10 @@
   "description": "The Runnable and Runner in JavaScript/Typescript.",
   "keywords": [],
   "type": "module",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "sideEffects": true,
   "files": [
-    "lib",
     "src"
   ],
   "repository": "git@github.com:BlackGlory/extra-runnable.git",
@@ -22,13 +21,13 @@
     "lint": "eslint --quiet src __tests__",
     "test": "vitest run",
     "prepublishOnly": "run-s prepare clean build",
-    "clean": "rimraf lib",
+    "clean": "rimraf --glob 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
     "build": "tsc --project tsconfig.build.json",
     "release": "standard-version"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "run-s prepare clean lint build test",
+      "pre-commit": "run-s prepare clean lint build test clean",
       "commit-msg": "commitlint --config commitlint.config.cjs --env HUSKY_GIT_PARAMS"
     }
   },
@@ -54,7 +53,13 @@
   },
   "dependencies": {
     "@blackglory/prelude": "^0.4.0",
+    "@delight-rpc/child-process": "^0.6.2",
+    "@delight-rpc/worker-threads": "^6.0.1",
+    "delight-rpc": "^6.1.2",
     "extra-fsm": "^0.2.1",
-    "extra-promise": "^7.0.0"
+    "extra-promise": "^7.0.0",
+    "hotypes": "^0.6.5",
+    "nanoid": "^5.1.5",
+    "url-operator": "^0.3.1"
   }
 }

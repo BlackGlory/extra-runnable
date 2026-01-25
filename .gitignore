@@ -58,6 +58,7 @@ typings/
 .env
 
 # Build
+lib
 src/**/*.js
 src/**/*.d.ts
 src/**/*.js.map

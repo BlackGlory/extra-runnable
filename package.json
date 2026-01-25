@@ -4,11 +4,12 @@
   "description": "The Runnable and Runner in JavaScript/Typescript.",
   "keywords": [],
   "type": "module",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "sideEffects": true,
   "files": [
-    "src"
+    "src",
+    "lib"
   ],
   "repository": "git@github.com:BlackGlory/extra-runnable.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
@@ -19,15 +20,17 @@
   "scripts": {
     "prepare": "ts-patch install -s",
     "lint": "eslint --quiet src __tests__",
-    "test": "vitest run",
+    "test": "run-s clean test:build test:run clean",
+    "test:build": "tsc --project tsconfig.test.json",
+    "test:run": "vitest run",
     "prepublishOnly": "run-s prepare clean build",
-    "clean": "rimraf --glob 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
+    "clean": "rimraf --glob lib 'src/**/*.js' 'src/**/*.js.map' 'src/**/*.d.ts'",
     "build": "tsc --project tsconfig.build.json",
     "release": "standard-version"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "run-s prepare clean lint build test clean",
+      "pre-commit": "run-s prepare clean lint build test",
       "commit-msg": "commitlint --config commitlint.config.cjs --env HUSKY_GIT_PARAMS"
     }
   },

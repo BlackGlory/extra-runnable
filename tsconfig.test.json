@@ -4,7 +4,6 @@
     "declaration": true
   , "removeComments": false
   , "sourceMap": true
-  , "outDir": "lib"
   }
 , "include": [
     "src"

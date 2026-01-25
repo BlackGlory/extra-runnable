@@ -5,4 +5,9 @@ export default defineConfig({
   plugins: [
     tsconfigPaths()
   ]
+, test: {
+    typecheck: {
+      tsconfig: 'tsconfig.test.json'
+    }
+  }
 })

@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.1.1](https://github.com/BlackGlory/extra-runnable/compare/v6.1.0...v6.1.1) (2026-01-25)
+
 ## [6.1.0](https://github.com/BlackGlory/extra-runnable/compare/v6.0.0...v6.1.0) (2025-08-11)
 
 

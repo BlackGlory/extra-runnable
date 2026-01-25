@@ -44,6 +44,7 @@ const schema: IFiniteStateMachineSchema<RunnerState, Event> = {
     start: RunnerState.Starting
   , destroy: RunnerState.Destroyed
   }
+  // 从Starting转换至Running/Error的过程总是同步的, 因此无需支持stop事件.
 , [RunnerState.Starting]: {
     started: RunnerState.Running
   , error: RunnerState.Error
@@ -104,6 +105,7 @@ export class Runner<Args extends unknown[], Result> {
 
     try {
       const promise = this.runnable.run(...args)
+      // 在调用run之后进入Running状态.
       this.fsm.send('started')
       const result = await promise
 

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.0](https://github.com/BlackGlory/extra-runnable/compare/v6.1.1...v7.0.0) (2026-02-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **runnable-thread, runnable-process:** - The `RunnableProcess#destroy()` now returns a Promise.
+- The `RunnableFunction#run()` now returns a Promise.
+
+### Bug Fixes
+
+* **runnable-thread, runnable-process:** call `module.destroy()` ([fa88792](https://github.com/BlackGlory/extra-runnable/commit/fa88792ab9918ae75f71b2fc74b78abcc87842fa))
+
 ### [6.1.1](https://github.com/BlackGlory/extra-runnable/compare/v6.1.0...v6.1.1) (2026-01-25)
 
 ## [6.1.0](https://github.com/BlackGlory/extra-runnable/compare/v6.0.0...v6.1.0) (2025-08-11)

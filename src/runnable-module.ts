@@ -1,4 +1,4 @@
-import { assert, isntUndefined } from '@blackglory/prelude'
+import { assert } from '@blackglory/prelude'
 import { importRawRunnableModule } from '@utils/import-raw-runnable-module.js'
 import { IRunnable, IRawRunnableModule } from './types.js'
 
@@ -16,12 +16,16 @@ export class RunnableModule<Args extends unknown[], Result> implements IRunnable
   }
 
   async run(...args: Args): Promise<Result> {
-    assert(isntUndefined(this.module), 'module is undefined')
+    assert(this.module, 'module is undefined')
 
     const controller = new AbortController()
     this.controller = controller
 
-    return await this.module.default(controller.signal, ...args)
+    try {
+      return await this.module.default(controller.signal, ...args)
+    } finally {
+      this.controller = undefined
+    }
   }
 
   abort(): void {
@@ -33,8 +37,6 @@ export class RunnableModule<Args extends unknown[], Result> implements IRunnable
 
   destroy(): void {
     this.module?.destroy?.()
-
-    this.controller = undefined
     this.module = undefined
   }
 

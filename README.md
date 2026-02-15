@@ -64,7 +64,7 @@ class RunnableFunction<Args extends unknown[], Result> implements IRunnable<Args
   constructor(fn: IRawRunnableFunction<Args, Result>)
 
   init(): void
-  run(...args: Args): Awaitable<Result>
+  run(...args: Args): Promise<Result>
   abort(): void
   destroy(): void
 
@@ -117,7 +117,7 @@ class RunnableProcess<Args extends unknown[], Result> implements IRunnable<Args,
   init(): Promise<void>
   run(...args: Args): Promise<Result>
   abort(): Promise<void>
-  destroy(): void
+  destroy(): Promise<void>
 
   clone(): RunnableProcess<Args, Result>
 }

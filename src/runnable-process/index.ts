@@ -44,7 +44,9 @@ export class RunnableProcess<Args extends unknown[], Result> implements IRunnabl
     await this.client.abort()
   }
 
-  destroy(): void {
+  async destroy(): Promise<void> {
+    await this.client?.destroy()
+
     this.cancelClient?.()
     this.childProcess?.kill('SIGKILL')
 

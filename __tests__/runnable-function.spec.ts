@@ -6,7 +6,7 @@ import { AbortError } from 'extra-abort'
 
 describe('RunnableFunction', () => {
   test('run', async () => {
-    const fn = vi.fn((signal, value) => value)
+    const fn = vi.fn((signal: AbortSignal, value: string) => value)
     const runnable = new RunnableFunction(fn)
 
     const result = await runnable.run('foo')
@@ -34,12 +34,23 @@ describe('RunnableFunction', () => {
     expect(err).toBeInstanceOf(AbortError)
   })
 
-  test('clone', () => {
+  test('destroy', async () => {
+    const fn = vi.fn(() => 'foo')
+    const runnable = new RunnableFunction(fn)
+    runnable.init()
+
+    runnable.destroy()
+    const result = await runnable.run()
+
+    expect(result).toBe('foo')
+  })
+
+  test('clone', async () => {
     const fn = vi.fn(() => 'foo')
     const runnable = new RunnableFunction(fn)
 
     const runnableClone = runnable.clone()
-    const result = runnableClone.run()
+    const result = await runnableClone.run()
 
     expect(runnableClone).not.toBe(runnable)
     expect(result).toBe('foo')

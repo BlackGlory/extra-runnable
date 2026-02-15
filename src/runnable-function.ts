@@ -1,22 +1,24 @@
-import { Awaitable, pass } from '@blackglory/prelude'
+import { pass } from '@blackglory/prelude'
 import { IRunnable, IRawRunnableFunction } from './types.js'
 
 export class RunnableFunction<Args extends unknown[], Result> implements IRunnable<Args, Result> {
   private controller?: AbortController
 
-  constructor(
-    private fn: IRawRunnableFunction<Args, Result>
-  ) {}
+  constructor(private fn: IRawRunnableFunction<Args, Result>) {}
 
   init(): void {
     pass()
   }
 
-  run(...args: Args): Awaitable<Result> {
+  async run(...args: Args): Promise<Result> {
     const controller = new AbortController()
     this.controller = controller
 
-    return this.fn(controller.signal, ...args)
+    try {
+      return await this.fn(controller.signal, ...args)
+    } finally {
+      this.controller = undefined
+    }
   }
 
   abort(): void {

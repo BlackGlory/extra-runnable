@@ -19,14 +19,22 @@ class API<Args extends unknown[], Result> implements IAPI<Args, Result> {
 
     const promise = this.module.default(this.controller.signal, ...args)
 
-    return await promise
+    try {
+      return await promise
+    } finally {
+      this.controller = undefined
+    }
   }
 
   abort(): void {
-    assert(this.controller)
+    if (this.controller) {
+      this.controller.abort()
+      this.controller = undefined
+    }
+  }
 
-    this.controller.abort()
-    this.controller = undefined
+  async destroy(): Promise<void> {
+    await this.module?.destroy?.()
   }
 }
 

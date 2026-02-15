@@ -45,6 +45,8 @@ export class RunnableThread<Args extends unknown[], Result> implements IRunnable
   }
 
   async destroy(): Promise<void> {
+    await this.client?.destroy()
+
     this.cancelClient?.()
     await this.worker?.terminate()
 

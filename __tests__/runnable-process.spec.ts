@@ -72,7 +72,7 @@ describe('RunnableProcess', () => {
     const runnable = new RunnableProcess(getFixturePath('valid.js'))
     await runnable.init()
 
-    runnable.destroy()
+    await runnable.destroy()
     const err = await getErrorAsync(() => runnable.run('echo', 'foo'))
 
     expect(err).toBeInstanceOf(Error)

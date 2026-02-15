@@ -5,14 +5,12 @@ import { pathToFileURL } from 'url'
 import { appendSearchParam } from 'url-operator'
 import { nanoid } from 'nanoid'
 
-const cachePreventionFieldName = nanoid()
-
 export async function importRawRunnableModule<Args extends unknown[], Result>(
   filename: string
 ): Promise<MapPropsToRequiredByKey<IRawRunnableModule<Args, Result>, 'destroy'>> {
   const url = appendSearchParam(
     new URL(pathToFileURL(filename))
-  , cachePreventionFieldName
+  , 'id'
   , nanoid()
   ).href
 

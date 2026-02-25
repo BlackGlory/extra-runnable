@@ -9,5 +9,7 @@ export default defineConfig({
     typecheck: {
       tsconfig: 'tsconfig.test.json'
     }
+  , maxWorkers: 1
+  , isolate: false
   }
 })

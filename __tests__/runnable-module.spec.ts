@@ -1,8 +1,17 @@
-import { describe, test, expect } from 'vitest'
+import { describe, test, expect, beforeEach, afterAll } from 'vitest'
 import { getErrorAsync, getErrorPromise } from 'return-style'
 import { RunnableModule } from '@src/runnable-module.js'
 import { getFixturePath } from '@test/utils.js'
 import { AbortError } from 'extra-abort'
+import { remove } from 'extra-filesystem'
+import os from 'os'
+import path from 'path'
+import fs from 'fs/promises'
+
+const stateFilename = path.join(os.tmpdir(), 'extra-runnable-test')
+
+beforeEach(() => remove(stateFilename))
+afterAll(() => remove(stateFilename))
 
 describe('RunnableModule', () => {
   describe('init', () => {
@@ -10,6 +19,8 @@ describe('RunnableModule', () => {
       const runnable = new RunnableModule(getFixturePath('valid.js'))
 
       await runnable.init()
+
+      expect(await fs.readFile(stateFilename, 'utf-8')).toBe('inited')
     })
 
     test('invalid', async () => {
@@ -60,6 +71,7 @@ describe('RunnableModule', () => {
     const err = await getErrorAsync(() => runnable.run('echo', 'foo'))
 
     expect(err).toBeInstanceOf(Error)
+    expect(await fs.readFile(stateFilename, 'utf-8')).toBe('destroyed')
   })
 
   test('clone', async () => {

@@ -1,5 +1,11 @@
 import { delay } from 'extra-promise'
 import { assert } from '@blackglory/prelude'
+import os from 'os'
+import path from 'path'
+import fs from 'fs/promises'
+
+const stateFilename = path.join(os.tmpdir(), 'extra-runnable-test')
+await fs.writeFile(stateFilename, 'inited')
 
 let destroyed = false
 
@@ -22,6 +28,7 @@ export default async function (signal, command, ...args) {
   }
 }
 
-export function destroy() {
+export async function destroy() {
   destroyed = true
+  await fs.writeFile(stateFilename, 'destroyed')
 }

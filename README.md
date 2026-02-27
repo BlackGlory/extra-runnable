@@ -58,6 +58,9 @@ class Runner<Args extends unknown[], Result> {
 ```
 
 ### Runnables
+All runnables do not support concurrent running,
+their behavior during concurrent running is unpredictable.
+
 #### RunnableFunction
 ```ts
 class RunnableFunction<Args extends unknown[], Result> implements IRunnable<Args, Result> {

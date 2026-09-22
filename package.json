@@ -56,14 +56,14 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@blackglory/prelude": "^0.4.0",
-    "@delight-rpc/child-process": "^0.6.4",
-    "@delight-rpc/worker-threads": "^6.0.3",
-    "delight-rpc": "^6.1.2",
+    "@blackglory/prelude": "^0.5.0",
+    "@delight-rpc/child-process": "^0.7.5",
+    "@delight-rpc/worker-threads": "^8.0.1",
+    "delight-rpc": "^7.0.0",
     "extra-fsm": "^0.2.1",
-    "extra-promise": "^7.0.1",
+    "extra-promise": "^7.1.1",
     "hotypes": "^0.6.5",
-    "nanoid": "^5.1.6",
-    "url-operator": "^0.3.2"
+    "nanoid": "^6.0.1",
+    "url-operator": "^0.3.5"
   }
 }

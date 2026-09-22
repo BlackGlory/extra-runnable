@@ -1,12 +1,12 @@
 import { createClient } from '@delight-rpc/worker-threads'
 import { ClientProxy } from 'delight-rpc'
 import { Worker } from 'worker_threads'
-import { assert } from '@blackglory/prelude'
+import { assert, lazy } from '@blackglory/prelude'
 import { fileURLToPath } from 'url'
 import { IRunnable } from '@src/types.js'
 import { IAPI } from './types.js'
 
-const workerFilename = fileURLToPath(new URL('./worker.js', import.meta.url))
+const getWorkerFilename = lazy(() => fileURLToPath(new URL('./worker.js', import.meta.url)))
 
 export class RunnableThread<Args extends unknown[], Result> implements IRunnable<Args, Result> {
   private worker?: Worker
@@ -20,7 +20,7 @@ export class RunnableThread<Args extends unknown[], Result> implements IRunnable
 
   async init(): Promise<void> {
     try {
-      this.worker = new Worker(workerFilename)
+      this.worker = new Worker(getWorkerFilename())
       ;[this.client, this.cancelClient] = createClient<IAPI<Args, Result>>(
         this.worker
       )

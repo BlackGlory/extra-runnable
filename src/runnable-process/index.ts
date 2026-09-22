@@ -1,4 +1,4 @@
-import { assert } from '@blackglory/prelude'
+import { assert, lazy } from '@blackglory/prelude'
 import { createClient } from '@delight-rpc/child-process'
 import { ClientProxy } from 'delight-rpc'
 import { fork, ChildProcess } from 'child_process'
@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 import { IRunnable } from '@src/types.js'
 import { IAPI } from './types.js'
 
-const workerFilename = fileURLToPath(new URL('./worker.js', import.meta.url))
+const getWorkerFilename = lazy(() => fileURLToPath(new URL('./worker.js', import.meta.url)))
 
 export class RunnableProcess<Args extends unknown[], Result> implements IRunnable<Args, Result> {
   private childProcess?: ChildProcess
@@ -20,7 +20,7 @@ export class RunnableProcess<Args extends unknown[], Result> implements IRunnabl
 
   async init(): Promise<void> {
     try {
-      this.childProcess = fork(workerFilename, { serialization: 'advanced' })
+      this.childProcess = fork(getWorkerFilename(), { serialization: 'advanced' })
       ;[this.client, this.cancelClient] = createClient<IAPI<Args, Result>>(
         this.childProcess
       )
